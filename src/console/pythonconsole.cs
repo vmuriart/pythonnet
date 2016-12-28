@@ -2,7 +2,9 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 using Python.Runtime;
-
+#if !NET46
+using System.Runtime.Loader;
+#endif
 namespace Python.Runtime
 {
     public sealed class PythonConsole
@@ -47,13 +49,17 @@ namespace Python.Runtime
                     }
 
                     // looks for the assembly from the resources and load it
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                    using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream(resourceName))
                     {
                         if (stream != null)
                         {
+#if NET46
                             Byte[] assemblyData = new Byte[stream.Length];
                             stream.Read(assemblyData, 0, assemblyData.Length);
                             Assembly assembly = Assembly.Load(assemblyData);
+#else
+                            Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(stream);
+#endif
                             loadedAssemblies[resourceName] = assembly;
                             return assembly;
                         }

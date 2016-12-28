@@ -6,9 +6,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using ReflectionBridge.Extensions;
+#if !NET46
+using System.Runtime.Loader;
+#endif
 
 namespace Python.Runtime
 {
+
     /// <summary>
     /// The AssemblyManager maintains information about loaded assemblies
     /// namespaces and provides an interface for name-based type lookup.
@@ -19,7 +24,9 @@ namespace Python.Runtime
         // therefore this should be a ConcurrentDictionary
         static ConcurrentDictionary<string, ConcurrentDictionary<Assembly, string>> namespaces;
         //static Dictionary<string, Dictionary<string, string>> generics;
+#if NET46
         static AssemblyLoadEventHandler lhandler;
+#endif
         static ResolveEventHandler rhandler;
         // updated only under GIL?
         static Dictionary<string, int> probed;
@@ -47,14 +54,15 @@ namespace Python.Runtime
             pypath = new List<string>(16);
 
             AppDomain domain = AppDomain.CurrentDomain;
-
+#if NET46
             lhandler = new AssemblyLoadEventHandler(AssemblyLoadHandler);
             domain.AssemblyLoad += lhandler;
-
+#endif
             rhandler = new ResolveEventHandler(ResolveHandler);
             domain.AssemblyResolve += rhandler;
 
             Assembly[] items = domain.GetAssemblies();
+
             foreach (var a in items)
             {
                 try
@@ -77,11 +85,13 @@ namespace Python.Runtime
         internal static void Shutdown()
         {
             AppDomain domain = AppDomain.CurrentDomain;
+#if NET46
             domain.AssemblyLoad -= lhandler;
+#endif
             domain.AssemblyResolve -= rhandler;
         }
 
-
+#if NET46
         //===================================================================
         // Event handler for assembly load events. At the time the Python
         // runtime loads, we scan the app domain to map the assemblies that
@@ -96,7 +106,7 @@ namespace Python.Runtime
             assemblies.Add(assembly);
             ScanAssembly(assembly);
         }
-
+#endif
 
         //===================================================================
         // Event handler for assembly resolve events. This is needed because
@@ -119,7 +129,6 @@ namespace Python.Runtime
             }
             return LoadAssemblyPath(args.Name);
         }
-
 
         //===================================================================
         // We __really__ want to avoid using Python objects or APIs when
@@ -204,7 +213,11 @@ namespace Python.Runtime
             Assembly assembly = null;
             try
             {
+#if NET46
                 assembly = Assembly.Load(name);
+#else
+                assembly = Assembly.Load(new AssemblyName(name));
+#endif
             }
             catch (System.Exception e)
             {
@@ -228,7 +241,11 @@ namespace Python.Runtime
             {
                 try
                 {
+#if NET46
                     assembly = Assembly.LoadFrom(path);
+#else
+                    assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+#endif
                 }
                 catch
                 {
@@ -253,7 +270,11 @@ namespace Python.Runtime
                 {
                     try
                     {
+#if NET46
                         assembly = Assembly.LoadFrom(name);
+#else
+                        assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(name);
+#endif
                     }
                     catch
                     {
@@ -373,7 +394,7 @@ namespace Python.Runtime
                     namespaces[ns].TryAdd(assembly, String.Empty);
                 }
 
-                if (ns != null && t.IsGenericTypeDefinition)
+                if (ns != null && t.GetTypeInfo().IsGenericTypeDefinition)
                 {
                     GenericUtil.Register(t);
                 }

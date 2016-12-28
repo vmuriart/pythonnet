@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Reflection;
 using System.Security;
+using ReflectionBridge.Extensions;
 
 namespace Python.Runtime
 {
+
     /// <summary>
     /// The ClassManager is responsible for creating and managing instances
     /// that implement the Python type objects that reflect managed classes.
@@ -75,7 +77,7 @@ namespace Python.Runtime
             // lets us check once (vs. on every lookup) in case we need to
             // wrap Exception-derived types in old-style classes
 
-            if (type.ContainsGenericParameters)
+            if (type.GetTypeInfo().ContainsGenericParameters)
             {
                 impl = new GenericType(type);
             }
@@ -90,7 +92,7 @@ namespace Python.Runtime
                 impl = new ArrayObject(type);
             }
 
-            else if (type.IsInterface)
+            else if (type.IsInterface())
             {
                 impl = new InterfaceObject(type);
             }
@@ -241,7 +243,7 @@ namespace Python.Runtime
                 }
             }
 
-            if (type.IsInterface)
+            if (type.IsInterface())
             {
                 // Interface inheritance seems to be a different animal:
                 // more contractual, less structural.  Thus, a Type that
@@ -355,9 +357,9 @@ namespace Python.Runtime
                         continue;
 
                     case MemberTypes.NestedType:
-                        tp = (Type)mi;
-                        if (!(tp.IsNestedPublic || tp.IsNestedFamily ||
-                              tp.IsNestedFamORAssem))
+                        tp = ((TypeInfo)mi).AsType();
+                        if (!(tp.IsNestedPublic() || tp.GetTypeInfo().IsNestedFamily ||
+                              tp.GetTypeInfo().IsNestedFamORAssem))
                             continue;
                         // Note the given instance might be uninitialized
                         ob = ClassManager.GetClass(tp);

@@ -4,14 +4,17 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Security;
 using System.Collections;
+using ReflectionBridge.Extensions;
 
 namespace Python.Runtime
 {
+
     //========================================================================
     // Performs data conversions between managed types and Python types.
     //========================================================================
-
+#if NET46
     [SuppressUnmanagedCodeSecurityAttribute()]
+#endif
     internal class Converter
     {
         private Converter()
@@ -307,7 +310,7 @@ namespace Python.Runtime
                 return false;
             }
 
-            if (value == Runtime.PyNone && !obType.IsValueType)
+            if (value == Runtime.PyNone && !obType.IsValueType())
             {
                 result = null;
                 return true;
@@ -318,7 +321,7 @@ namespace Python.Runtime
                 return ToArray(value, obType, out result, setError);
             }
 
-            if (obType.IsEnum)
+            if (obType.IsEnum())
             {
                 return ToEnum(value, obType, out result, setError);
             }

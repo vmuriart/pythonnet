@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Reflection;
+#if NET46
 using System.Security.Permissions;
-
+#endif
 namespace Python.Runtime
 {
     //========================================================================
@@ -14,8 +15,9 @@ namespace Python.Runtime
         PropertyInfo info;
         MethodInfo getter;
         MethodInfo setter;
-
+#if NET46
         [StrongNameIdentityPermissionAttribute(SecurityAction.Assert)]
+#endif
         public PropertyObject(PropertyInfo md) : base()
         {
             getter = md.GetGetMethod(true);

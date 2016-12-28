@@ -3,9 +3,11 @@ using System.Collections;
 using System.Reflection;
 using System.Security;
 using System.Runtime.InteropServices;
+using ReflectionBridge.Extensions;
 
 namespace Python.Runtime
 {
+
     /// <summary>
     /// Base class for Python types that reflect managed types / classes.
     /// Concrete subclasses include ClassObject and DelegateObject. This
@@ -27,7 +29,7 @@ namespace Python.Runtime
 
         internal virtual bool CanSubclass()
         {
-            return (!this.type.IsEnum);
+            return (!this.type.IsEnum());
         }
 
         //====================================================================

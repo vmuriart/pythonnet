@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
+using ReflectionBridge.Extensions;
+
 #if (UCS4)
 using System.Text;
 using Mono.Unix;
@@ -13,7 +15,10 @@ using System.Text;
 
 namespace Python.Runtime
 {
+
+#if NET46
     [SuppressUnmanagedCodeSecurityAttribute()]
+#endif
     static class NativeMethods
     {
 #if (MONO_LINUX || MONO_OSX)
@@ -99,7 +104,7 @@ namespace Python.Runtime
 #if (UCS2)
         public const int UCS = 2;
 #endif
-#if ! (UCS2 || UCS4)
+#if !(UCS2 || UCS4)
 #error You must define either UCS2 or UCS4!
 #endif
 
@@ -139,7 +144,7 @@ namespace Python.Runtime
         public const string pyversion = "3.5";
         public const int pyversionnumber = 35;
 #endif
-#if ! (PYTHON23 || PYTHON24 || PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
+#if !(PYTHON23 || PYTHON24 || PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
 #error You must define one of PYTHON23 to PYTHON35
 #endif
 
@@ -346,7 +351,7 @@ namespace Python.Runtime
 
             // Need to add the runtime directory to sys.path so that we
             // can find built-in assemblies like System.Data, et. al.
-            string rtdir = RuntimeEnvironment.GetRuntimeDirectory();
+            string rtdir = typeof(string).GetAssembly().Location;
             IntPtr path = Runtime.PySys_GetObject("path");
             IntPtr item = Runtime.PyString_FromString(rtdir);
             Runtime.PyList_Append(path, item);

@@ -12,3 +12,5 @@ pythonnet.egg-info
 *.userprefs
 build/
 tools/nuget/*.exe
+.vs
+*.lock.json

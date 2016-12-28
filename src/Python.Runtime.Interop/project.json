@@ -1,0 +1,24 @@
+{
+  "version": "2.2.0-*",
+  "buildOptions": {
+    "define": [ "TRACE", "DEBUG", "UCS2", "PYTHON35" ],
+    "allowUnsafe": true
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "JetBrains.Annotations": "10.1.4",
+    "Python.Runtime": "2.2.0-*"
+  },
+
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "System.Dynamic.Runtime": "4.0.11"
+      }
+    },
+    "net46": {
+
+    }
+  }
+}

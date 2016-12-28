@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Console", "src\console\Console.xproj", "{5BF55E20-325C-45B3-86FC-2FDBBD91901F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Runtime", "src\Python.Runtime\Python.Runtime.xproj", "{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "embed_tests", "src\embed_tests\embed_tests.xproj", "{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Net", "src\Python.Net\Python.Net.xproj", "{F4E01C59-8951-451F-86F5-EF61CAAA786F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Runtime.Interop", "src\Python.Runtime.Interop\Python.Runtime.Interop.xproj", "{7395D369-8AEA-40F2-AD38-138B422FAD3B}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ClrCoder", "..\ClrCoder\src\ClrCoder\ClrCoder.xproj", "{128376A9-B458-4CDC-97B8-394BF4C61226}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Py35-UCS2-Win-Debug|Any CPU = Py35-UCS2-Win-Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BF55E20-325C-45B3-86FC-2FDBBD91901F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4E01C59-8951-451F-86F5-EF61CAAA786F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7395D369-8AEA-40F2-AD38-138B422FAD3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Py35-UCS2-Win-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Py35-UCS2-Win-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{128376A9-B458-4CDC-97B8-394BF4C61226}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = src\console\Console.csproj
+		Policies = $0
+		$0.VersionControlPolicy = $1
+		$1.inheritsSet = Mono
+		$0.ChangeLogPolicy = $2
+		$2.UpdateMode = None
+		$2.MessageStyle = $3
+		$3.LineAlign = 0
+		$2.inheritsSet = Mono
+	EndGlobalSection
+EndGlobal

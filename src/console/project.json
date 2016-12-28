@@ -1,0 +1,25 @@
+﻿{
+  "version": "2.2.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+  "runtimes": {
+    "win7-x64": {},
+    "ubuntu.16.04-x64": {}
+  },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Python.Runtime": "2.2.0-*",
+    "Python.Runtime.Interop": "2.2.0-*"
+  },
+  "frameworks": {
+    "netcoreapp1.1": {
+      "imports": "dnxcore50",
+      "dependencies": {
+        "System.Runtime.Loader": "4.0.0"
+      }
+    },
+    "net46": {
+    }
+  }
+}

@@ -148,7 +148,7 @@ namespace Python.Runtime
                     IntPtr builtins = Runtime.PyEval_GetBuiltins();
                     Runtime.PyDict_SetItemString(module_globals, "__builtins__", builtins);
 
-                    var assembly = Assembly.GetEntryAssembly();
+                    var assembly = typeof(Runtime).GetTypeInfo().Assembly;
                     using (Stream stream = assembly.GetManifestResourceStream("Python.Runtime.resources.clr.py"))
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -257,6 +257,7 @@ namespace Python.Runtime
         {
             if (initialized)
             {
+                Runtime.Py_Main(3, new[] { "some.exe", "-c", "exit" });
                 Runtime.Shutdown();
                 initialized = false;
             }

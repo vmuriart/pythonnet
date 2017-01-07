@@ -7,6 +7,8 @@ using System.Runtime.Loader;
 #endif
 namespace Python.Runtime
 {
+    using System.IO;
+
     public sealed class PythonConsole
     {
         private PythonConsole()
@@ -16,6 +18,7 @@ namespace Python.Runtime
         [STAThread]
         public static int Main(string[] args)
         {
+            Console.WriteLine(Directory.GetCurrentDirectory());
             // reference the static assemblyLoader to stop it being optimized away
             AssemblyLoader a = assemblyLoader;
 

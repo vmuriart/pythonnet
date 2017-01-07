@@ -2,6 +2,7 @@ namespace Python.Runtime
 {
     using System;
     using System.Reflection;
+    using System.Runtime.InteropServices;
 #if !NET46
     using System.Runtime.Loader;
 #endif
@@ -31,6 +32,18 @@ namespace Python.Runtime
         internal static void InitInterop(IPythonInterop pythonInterop)
         {
             NativeMethods.InitInterop(pythonInterop.NativeMethods);
+            _interop = pythonInterop.Runtime;
+
+            UCS = pythonInterop.Runtime.UCS;
+            pyversion = pythonInterop.Runtime.PyVersion;
+            pyversionnumber = pythonInterop.Runtime.PyVersionNumber;
+            IsPython3 = pyversionnumber >= 30;
+            IsWindows = pythonInterop.TargetPlatform == OSPlatform.Windows;
+            IsOSX = pythonInterop.TargetPlatform == OSPlatform.OSX;
+            IsLinux = pythonInterop.TargetPlatform == OSPlatform.Linux;
+            IsPosix = IsLinux || IsOSX;
+            IsPyDebug = pythonInterop.IsPyDebug;
+            ObjectOffset.Init();
         }
 
         public static void InitInterop(string interopDllPath)

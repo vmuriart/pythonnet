@@ -81,19 +81,21 @@ namespace Python.Runtime
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class ObjectOffset
     {
-        static ObjectOffset()
+        internal static void Init()
         {
             int size = IntPtr.Size;
             int n = 0; // Py_TRACE_REFS add two pointers to PyObject_HEAD
-#if (Py_DEBUG)
-            _ob_next = 0;
-            _ob_prev = 1 * size;
-            n = 2;
-#endif
-            ob_refcnt = (n + 0)*size;
-            ob_type = (n + 1)*size;
-            ob_dict = (n + 2)*size;
-            ob_data = (n + 3)*size;
+            if (Runtime.IsPyDebug)
+            {
+                _ob_next = 0;
+                _ob_prev = 1 * size;
+                n = 2;
+            }
+
+            ob_refcnt = (n + 0) * size;
+            ob_type = (n + 1) * size;
+            ob_dict = (n + 2) * size;
+            ob_data = (n + 3) * size;
         }
 
         public static int magic(IntPtr ob)
@@ -123,17 +125,19 @@ namespace Python.Runtime
             {
                 return ExceptionOffset.Size();
             }
-#if (Py_DEBUG)
-            return 6 * IntPtr.Size;
-#else
-            return 4 * IntPtr.Size;
-#endif
+            if (Runtime.IsPyDebug)
+            {
+                return 6 * IntPtr.Size;
+            }
+            else
+            {
+                return 4 * IntPtr.Size;
+            }
         }
 
-#if (Py_DEBUG)
         public static int _ob_next;
         public static int _ob_prev;
-#endif
+
         public static int ob_refcnt;
         public static int ob_type;
         private static int ob_dict;
@@ -181,44 +185,6 @@ namespace Python.Runtime
 
 
 #if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    internal class BytesOffset
-    {
-        static BytesOffset()
-        {
-            Type type = typeof(BytesOffset);
-            FieldInfo[] fi = type.GetFields();
-            int size = IntPtr.Size;
-            for (int i = 0; i < fi.Length; i++)
-            {
-                fi[i].SetValue(null, i * size);
-            }
-        }
-
-        /* The *real* layout of a type object when allocated on the heap */
-        //typedef struct _heaptypeobject {
-#if (Py_DEBUG)  // #ifdef Py_TRACE_REFS
-/* _PyObject_HEAD_EXTRA defines pointers to support a doubly-linked list of all live heap objects. */
-        public static int _ob_next = 0;
-        public static int _ob_prev = 0;
-#endif
-        // PyObject_VAR_HEAD {
-        //     PyObject_HEAD {
-        public static int ob_refcnt = 0;
-        public static int ob_type = 0;
-        // }
-        public static int ob_size = 0;      /* Number of items in _VAR_iable part */
-        // }
-        public static int ob_shash = 0;
-        public static int ob_sval = 0; /* start of data */
-
-        /* Invariants:
-         *     ob_sval contains space for 'ob_size+1' elements.
-         *     ob_sval[ob_size] == 0.
-         *     ob_shash is the hash of the string or -1 if not computed yet.
-         */
-        //} PyBytesObject;
-    }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class ModuleDefOffset

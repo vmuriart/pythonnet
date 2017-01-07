@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Resources;
+using System.Runtime.CompilerServices;
 
 [assembly: AssemblyProduct("Python for .NET")]
 [assembly: AssemblyVersion("4.0.0.1")]
@@ -11,6 +12,7 @@ using System.Resources;
 [assembly: AssemblyCopyrightAttribute("Zope Public License, Version 2.0 (ZPL)")]
 [assembly: AssemblyFileVersionAttribute("2.0.0.2")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
+[assembly: InternalsVisibleTo("Python.Runtime.Interop")]
 
 #if (PYTHON23)
 [assembly: AssemblyTitleAttribute("Python.Runtime for Python 2.3")]

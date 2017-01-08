@@ -14,6 +14,8 @@
 
         int PyVersionNumber { get; }
 
+        string PythonDll { get; }
+
         // Py_IncRef and Py_DecRef are taking care of the extra payload
         // in Py_DEBUG builds of Python like _Py_RefTotal
         void Py_IncRef(IntPtr ob);

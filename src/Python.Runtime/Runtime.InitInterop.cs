@@ -43,6 +43,8 @@ namespace Python.Runtime
             IsLinux = pythonInterop.TargetPlatform == OSPlatform.Linux;
             IsPosix = IsLinux || IsOSX;
             IsPyDebug = pythonInterop.IsPyDebug;
+            dll = pythonInterop.Runtime.PythonDll;
+
             ObjectOffset.Init();
         }
 

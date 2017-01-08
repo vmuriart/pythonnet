@@ -1,17 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Security;
+
 using ReflectionBridge.Extensions;
-using System.Linq;
-using System.Text;
 
 namespace Python.Runtime
 {
     using Python.Runtime.InteropContracts;
 
-#if NET46
-    [SuppressUnmanagedCodeSecurityAttribute()]
-#endif
     static partial class NativeMethods
     {
         public static IntPtr LoadLibrary(string dllToLoad)
@@ -57,71 +52,7 @@ namespace Python.Runtime
 
         public static bool IsPyDebug;
 
-#if (PYTHON23)
-        internal const string dllBase = "python23";
-#endif
-#if (PYTHON24)
-        internal const string dllBase = "python24";
-#endif
-#if (PYTHON25)
-        internal const string dllBase = "python25";
-#endif
-#if (PYTHON26)
-        internal const string dllBase = "python26";
-#endif
-#if (PYTHON27)
-        internal const string dllBase = "python27";
-#endif
-#if (MONO_LINUX || MONO_OSX)
-#if (PYTHON32)
-        internal const string dllBase = "python3.2";
-#endif
-#if (PYTHON33)
-        internal const string dllBase = "python3.3";
-#endif
-#if (PYTHON34)
-        internal const string dllBase = "python3.4";
-#endif
-#if (PYTHON35)
-        internal const string dllBase = "python3.5";
-#endif
-#else
-#if (PYTHON32)
-        internal const string dllBase = "python32";
-#endif
-#if (PYTHON33)
-        internal const string dllBase = "python33";
-#endif
-#if (PYTHON34)
-        internal const string dllBase = "python34";
-#endif
-#if (PYTHON35)
-        internal const string dllBase = "python35";
-#endif
-#endif
-
-
-#if (PYTHON_WITH_PYDEBUG)
-        internal const string dllWithPyDebug = "d";
-#else
-        internal const string dllWithPyDebug = "";
-#endif
-#if (PYTHON_WITH_PYMALLOC)
-        internal const string dllWithPyMalloc = "m";
-#else
-        internal const string dllWithPyMalloc = "";
-#endif
-#if (PYTHON_WITH_WIDE_UNICODE)
-        internal const string dllWithWideUnicode = "u";
-#else
-        internal const string dllWithWideUnicode = "";
-#endif
-
-#if (PYTHON_WITHOUT_ENABLE_SHARED)
-        public const string dll = "__Internal";
-#else
-        public const string dll = dllBase + dllWithPyDebug + dllWithPyMalloc + dllWithWideUnicode;
-#endif
+        public static string dll;
 
         // set to true when python is finalizing
         internal static Object IsFinalizingLock = new Object();

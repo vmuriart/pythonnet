@@ -920,8 +920,6 @@ namespace Python.Runtime
 
         internal static int PyUnicode_GetSize(IntPtr ob) => _interop.PyUnicode_GetSize(ob);
 
-        internal static unsafe char* PyUnicode_AsUnicode(IntPtr ob) => _interop.PyUnicode_AsUnicode(ob);
-
         internal static IntPtr PyUnicode_AS_UNICODE(IntPtr op) => _interop.PyUnicode_AS_UNICODE(op);
 
         internal static IntPtr PyUnicode_FromOrdinal(int c) => _interop.PyUnicode_FromOrdinal(c);

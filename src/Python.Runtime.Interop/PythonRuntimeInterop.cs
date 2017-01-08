@@ -1231,10 +1231,28 @@
             EntryPoint = "PyUnicodeUCS4_FromUnicode",
             ExactSpelling = true)]
         internal unsafe static extern IntPtr
-            PyUnicode_FromUnicode(
-            [MarshalAs(UnmanagedType.CustomMarshaler,
-                MarshalTypeRef = typeof(Utf32Marshaler))] string s, int size);
+            PyUnicode_FromUnicode(IntPtr pstr, int size);
 
+        internal unsafe static IntPtr PyUnicode_FromUnicode(string s, int size)
+        {
+            var bufLength = Math.Max(s.Length, size) * 4;
+
+            IntPtr mem = Marshal.AllocHGlobal(bufLength);
+            try
+            {
+                fixed (char* ps = s)
+                {
+                    Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
+                }
+
+                var result = PyUnicode_FromUnicode(mem, bufLength);
+                return result;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(mem);
+            }
+        }
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl,
             EntryPoint = "PyUnicodeUCS4_GetSize",
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -1268,7 +1286,7 @@
 
         internal unsafe static string GetManagedString(IntPtr op)
         {
-            IntPtr type = PyObject_TYPE(op);
+            IntPtr type = Runtime.PyObject_TYPE(op);
 
 // Python 3 strings are all unicode
 #if !(PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
@@ -1283,8 +1301,8 @@
 
             if (type == Runtime.PyUnicodeType)
             {
-                IntPtr p = Runtime.PyUnicode_AsUnicode(op);
-                int length = Runtime.PyUnicode_GetSize(op);
+                IntPtr p = PyUnicode_AsUnicode(op);
+                int length = PyUnicode_GetSize(op);
                 int size = length*4;
                 byte[] buffer = new byte[size];
                 Marshal.Copy(p, buffer, 0, size);
@@ -2517,7 +2535,11 @@
 
         IntPtr IPythonRuntimeInterop.PyUnicode_FromKindAndString(int kind, string s, int size)
         {
+#if (UCS2) && (PYTHON33 || PYTHON34 || PYTHON35)
             return PyUnicode_FromKindAndString(kind, s, size);
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         IntPtr IPythonRuntimeInterop.PyUnicode_FromUnicode(string s, int size)
@@ -2528,11 +2550,6 @@
         int IPythonRuntimeInterop.PyUnicode_GetSize(IntPtr ob)
         {
             return PyUnicode_GetSize(ob);
-        }
-
-        unsafe char* IPythonRuntimeInterop.PyUnicode_AsUnicode(IntPtr ob)
-        {
-            return PyUnicode_AsUnicode(ob);
         }
 
         IntPtr IPythonRuntimeInterop.PyUnicode_AS_UNICODE(IntPtr op)
@@ -2756,7 +2773,11 @@
 
         IntPtr IPythonRuntimeInterop.PyModule_Create2(IntPtr module, int apiver)
         {
+#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
             return PyModule_Create2(module, apiver);
+#else
+            throw new NotSupportedException();
+#endif
         }
 
         IntPtr IPythonRuntimeInterop.PyImport_Import(IntPtr name)

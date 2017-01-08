@@ -42,6 +42,8 @@ namespace Python.Runtime
 
         public static bool IsPython3;
 
+        public static bool IsPython2;
+
         public static bool IsWindows;
 
         public static bool IsPosix;

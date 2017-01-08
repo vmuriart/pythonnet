@@ -1,5 +1,8 @@
 ﻿namespace Python.Runtime
 {
+    using System;
+    using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
 
     using Python.Runtime.InteropContracts;
@@ -34,6 +37,33 @@
                 return false;
 #endif
             }
+        }
+
+        public void InitTypeOffset()
+        {
+            CopyStaticFields<Interop.TypeOffset, TypeOffset>();
+        }
+
+        private void CopyStaticFields<TFrom, TTo>()
+        {
+            Type type = typeof(TFrom);
+            var actualValues = type.GetFields().ToDictionary(x => x.Name);
+
+            Type targetType = typeof(TTo);
+            var targetFields = targetType.GetFields();
+            for (int i = 0; i < targetFields.Length; i++)
+            {
+                FieldInfo actualField;
+                if (actualValues.TryGetValue(targetFields[i].Name, out actualField))
+                {
+                    targetFields[i].SetValue(null, actualField.GetValue(null));
+                }
+            }
+        }
+
+        public void InitExceptionOffset()
+        {
+            CopyStaticFields<Interop.ExceptionOffset, ExceptionOffset>();
         }
     }
 }

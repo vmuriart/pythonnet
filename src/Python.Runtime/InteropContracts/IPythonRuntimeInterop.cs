@@ -1,7 +1,6 @@
 ﻿namespace Python.Runtime.InteropContracts
 {
     using System;
-    using System.Runtime.InteropServices;
 
     public interface IPythonRuntimeInterop
     {

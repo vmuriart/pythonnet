@@ -14,5 +14,15 @@
         OSPlatform TargetPlatform { get; }
 
         bool IsPyDebug { get; }
+
+        /// <summary>
+        /// Initializes values in the <see cref="TypeOffset"/>.
+        /// </summary>
+        void InitTypeOffset();
+
+        /// <summary>
+        /// Initializes values in the <see cref="ExceptionOffset"/>.
+        /// </summary>
+        void InitExceptionOffset();
     }
 }

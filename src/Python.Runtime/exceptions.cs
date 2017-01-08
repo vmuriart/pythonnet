@@ -84,11 +84,15 @@ namespace Python.Runtime
 
         internal static void Initialize()
         {
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-            exceptions_module = Runtime.PyImport_ImportModule("builtins");
-#else
-            exceptions_module = Runtime.PyImport_ImportModule("exceptions");
-#endif
+            if (Runtime.IsPython3)
+            {
+                exceptions_module = Runtime.PyImport_ImportModule("builtins");
+            }
+            else
+            {
+                exceptions_module = Runtime.PyImport_ImportModule("exceptions");
+            }
+
             Exceptions.ErrorCheck(exceptions_module);
             warnings_module = Runtime.PyImport_ImportModule("warnings");
             Exceptions.ErrorCheck(warnings_module);
@@ -164,13 +168,14 @@ namespace Python.Runtime
 
             Marshal.WriteIntPtr(ob, ExceptionOffset.args, args);
 
-#if !(PYTHON25 || PYTHON26 || PYTHON27)
-            if (e.InnerException != null)
+            if (!(Runtime.pyversionnumber == 25 || Runtime.pyversionnumber == 26 || Runtime.pyversionnumber == 27))
             {
-                IntPtr cause = CLRObject.GetInstHandle(e.InnerException);
-                Marshal.WriteIntPtr(ob, ExceptionOffset.cause, cause);
+                if (e.InnerException != null)
+                {
+                    IntPtr cause = CLRObject.GetInstHandle(e.InnerException);
+                    Marshal.WriteIntPtr(ob, ExceptionOffset.cause, cause);
+                }
             }
-#endif
         }
 
         /// <summary>
@@ -371,17 +376,17 @@ namespace Python.Runtime
            puplic static variables on the Exceptions class filled in from
            the python class using reflection in Initialize() looked up by
 		   name, not posistion. */
-#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
+////#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
         public static IntPtr BaseException;
-#endif
+////#endif
         public static IntPtr Exception;
         public static IntPtr StopIteration;
-#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
+////#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
         public static IntPtr GeneratorExit;
-#endif
-#if !(PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
+////#endif
+////#if !(PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
         public static IntPtr StandardError;
-#endif
+////#endif
         public static IntPtr ArithmeticError;
         public static IntPtr LookupError;
 
@@ -436,10 +441,10 @@ namespace Python.Runtime
         public static IntPtr SyntaxWarning;
         public static IntPtr RuntimeWarning;
         public static IntPtr FutureWarning;
-#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
+////#if (PYTHON25 || PYTHON26 || PYTHON27 || PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
         public static IntPtr ImportWarning;
         public static IntPtr UnicodeWarning;
         //PyAPI_DATA(PyObject *) PyExc_BytesWarning;
-#endif
+////#endif
     }
 }

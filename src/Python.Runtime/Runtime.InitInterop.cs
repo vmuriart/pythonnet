@@ -33,18 +33,22 @@ namespace Python.Runtime
         {
             NativeMethods.InitInterop(pythonInterop.NativeMethods);
             _interop = pythonInterop.Runtime;
+            pythonInterop.InitTypeOffset();
+            pythonInterop.InitExceptionOffset();
 
             UCS = pythonInterop.Runtime.UCS;
             pyversion = pythonInterop.Runtime.PyVersion;
             pyversionnumber = pythonInterop.Runtime.PyVersionNumber;
             IsPython3 = pyversionnumber >= 30;
+            IsPython2 = pyversionnumber < 30;
             IsWindows = pythonInterop.TargetPlatform == OSPlatform.Windows;
             IsOSX = pythonInterop.TargetPlatform == OSPlatform.OSX;
             IsLinux = pythonInterop.TargetPlatform == OSPlatform.Linux;
             IsPosix = IsLinux || IsOSX;
             IsPyDebug = pythonInterop.IsPyDebug;
             dll = pythonInterop.Runtime.PythonDll;
-
+            TypeFlags.Init();
+            Interop.Init();
             ObjectOffset.Init();
         }
 

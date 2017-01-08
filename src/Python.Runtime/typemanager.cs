@@ -410,23 +410,29 @@ namespace Python.Runtime
             // Cheat a little: we'll set tp_name to the internal char * of
             // the Python version of the type name - otherwise we'd have to
             // allocate the tp_name and would have no way to free it.
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-    // For python3 we leak two objects. One for the ascii representation
-    // required for tp_name, and another for the unicode representation
-    // for ht_name.
-            IntPtr temp = Runtime.PyBytes_FromString(name);
-            IntPtr raw = Runtime.PyBytes_AS_STRING(temp);
-            temp = Runtime.PyUnicode_FromString(name);
-#else
-            IntPtr temp = Runtime.PyString_FromString(name);
-            IntPtr raw = Runtime.PyString_AS_STRING(temp);
-#endif
+            IntPtr temp;
+            IntPtr raw;
+            if (Runtime.IsPython3)
+            {
+                // For python3 we leak two objects. One for the ascii representation
+                // required for tp_name, and another for the unicode representation
+                // for ht_name.
+                temp = Runtime.PyBytes_FromString(name);
+                raw = Runtime.PyBytes_AS_STRING(temp);
+                temp = Runtime.PyUnicode_FromString(name);
+            }
+            else
+            {
+                temp = Runtime.PyString_FromString(name);
+                raw = Runtime.PyString_AS_STRING(temp);
+            }
             Marshal.WriteIntPtr(type, TypeOffset.tp_name, raw);
             Marshal.WriteIntPtr(type, TypeOffset.name, temp);
 
-#if (PYTHON33 || PYTHON34 || PYTHON35)
-            Marshal.WriteIntPtr(type, TypeOffset.qualname, temp);
-#endif
+            if (Runtime.pyversionnumber >= 33)
+            {
+                Marshal.WriteIntPtr(type, TypeOffset.qualname, temp);
+            }
 
             long ptr = type.ToInt64(); // 64-bit safe
 
@@ -439,13 +445,16 @@ namespace Python.Runtime
             temp = new IntPtr(ptr + TypeOffset.mp_length);
             Marshal.WriteIntPtr(type, TypeOffset.tp_as_mapping, temp);
 
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-            temp = new IntPtr(ptr + TypeOffset.bf_getbuffer);
-            Marshal.WriteIntPtr(type, TypeOffset.tp_as_buffer, temp);
-#else
-            temp = new IntPtr(ptr + TypeOffset.bf_getreadbuffer);
-            Marshal.WriteIntPtr(type, TypeOffset.tp_as_buffer, temp);
-#endif
+            if (Runtime.IsPython3)
+            {
+                temp = new IntPtr(ptr + TypeOffset.bf_getbuffer);
+                Marshal.WriteIntPtr(type, TypeOffset.tp_as_buffer, temp);
+            }
+            else
+            {
+                temp = new IntPtr(ptr + TypeOffset.bf_getreadbuffer);
+                Marshal.WriteIntPtr(type, TypeOffset.tp_as_buffer, temp);
+            }
 
             return type;
         }

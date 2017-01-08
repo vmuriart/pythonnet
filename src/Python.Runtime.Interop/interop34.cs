@@ -3,7 +3,7 @@
 
 
 
-#if (PYTHON32)
+#if (PYTHON34)
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace Python.Runtime {
+namespace Python.Runtime.Interop {
 
     [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
     internal class TypeOffset {
@@ -79,6 +79,7 @@ namespace Python.Runtime {
         public static int tp_weaklist = 0;
         public static int tp_del = 0;
         public static int tp_version_tag = 0;
+        public static int tp_finalize = 0;
         public static int nb_add = 0;
         public static int nb_subtract = 0;
         public static int nb_multiply = 0;
@@ -130,6 +131,8 @@ namespace Python.Runtime {
         public static int bf_releasebuffer = 0;
         public static int name = 0;
         public static int ht_slots = 0;
+        public static int qualname = 0;
+        public static int ht_cached_keys = 0;
 
         /* here are optional user slots, followed by the members. */
         public static int members = 0;

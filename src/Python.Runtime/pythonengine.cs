@@ -186,12 +186,8 @@ namespace Python.Runtime
         // CPython interpreter process - this bootstraps the managed runtime
         // when it is imported by the CLR extension module.
         //====================================================================
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-        public static IntPtr InitExt() {
-#else
-        public static void InitExt()
+        public static IntPtr InitExt()
         {
-#endif
             try
             {
                 Initialize();
@@ -234,14 +230,10 @@ namespace Python.Runtime
             catch (PythonException e)
             {
                 e.Restore();
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
                 return IntPtr.Zero;
-#endif
             }
 
-#if (PYTHON32 || PYTHON33 || PYTHON34 || PYTHON35)
-            return Python.Runtime.ImportHook.GetCLRModule();
-#endif
+            return Runtime.IsPython3 ? Python.Runtime.ImportHook.GetCLRModule() : IntPtr.Zero;
         }
 
         /// <summary>

@@ -97,10 +97,21 @@ namespace Python.Runtime
             warnings_module = Runtime.PyImport_ImportModule("warnings");
             Exceptions.ErrorCheck(warnings_module);
             Type type = typeof(Exceptions);
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Public |
-                                                    BindingFlags.Static))
+            foreach (var fi in type.GetFields(
+                BindingFlags.Public |
+                BindingFlags.Static))
             {
-                IntPtr op = Runtime.PyObject_GetAttrString(exceptions_module, fi.Name);
+                if (Runtime.pyversionnumber < 25
+                    && (fi.Name == "BaseException" || fi.Name == "GeneratorExit"))
+                {
+                    continue;
+                }
+                if (Runtime.pyversionnumber >= 32 && fi.Name == "StandardError")
+                {
+                    continue;
+                }
+
+                var op = Runtime.PyObject_GetAttrString(exceptions_module, fi.Name);
                 if (op != IntPtr.Zero)
                 {
                     fi.SetValue(type, op);

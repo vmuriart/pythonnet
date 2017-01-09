@@ -11,7 +11,9 @@
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "NUnit": "3.5.0",
     "Python.Runtime": "2.2.0-*",
-    "Python.Runtime.Interop": "2.2.0-*"
+    "Python.Runtime.Interop": "2.2.0-*",
+    "Python.Net": "2.2.0-*",
+    "FluentAssertions": "4.18.0"
   },
   "testRunner": "nunit-teamcity",
   "frameworks": {

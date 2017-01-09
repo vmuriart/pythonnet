@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
+    using System.Reflection;
+    using System.Resources;
     using System.Runtime.CompilerServices;
     using System.Threading;
 
@@ -72,15 +74,17 @@
 
             Log.Debug(_ => _("Python engine initialization started."));
 
-            // ReSharper disable once ConvertClosureToMethodGroup
-            Action monoWorkaround = () => { PythonEngine.Initialize(); };
-
-            monoWorkaround();
-
-            // This wait requires to avoid mono shutdown bug.
-            // Also to see success messages.
-            Thread.Sleep(2000);
-
+            var pythonetModuleFileName = Path.Combine(EnvironmentEx.BinPath, "pythonnet.py");
+            // Ensuring that pythonnet.py file exists in the bin directory
+            if (!File.Exists(pythonetModuleFileName) || new FileInfo(pythonetModuleFileName).Length == 0)
+            {
+                var assembly = typeof(PythonWrapper).GetTypeInfo().Assembly;
+                using (Stream stream = assembly.GetManifestResourceStream("Python.Net.pythonnet.py"))
+                using (Stream file = File.Create(pythonetModuleFileName))
+                {
+                    stream.CopyTo(file);
+                }
+            }
             using (GIL())
             {
                 _sysModule = SafeLoadModuleInternal("sys", false);

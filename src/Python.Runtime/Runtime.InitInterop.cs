@@ -23,9 +23,7 @@ namespace Python.Runtime
     {
         static Runtime()
         {
-            var binLocation = typeof(Runtime).GetTypeInfo().Assembly.Location;
-            var interopDllPath = Path.Combine(Path.GetDirectoryName(binLocation), "Python.Runtime.Interop.dll");
-            InitInterop(interopDllPath);
+            InitInterop();
         }
 
         internal static void InitInterop(IPythonInterop pythonInterop)
@@ -51,13 +49,11 @@ namespace Python.Runtime
             ObjectOffset.Init();
         }
 
-        public static void InitInterop(string interopDllPath)
+
+        public static void InitInterop()
         {
-#if NET46
-            var assembly = Assembly.LoadFrom(interopDllPath);
-#else
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(interopDllPath);
-#endif
+            var assembly = Assembly.Load(new AssemblyName("Python.Runtime.Interop"));
+
             var type = assembly.GetType("Python.Runtime.Interop.PythonInterop");
             var pythonInterop = (IPythonInterop)Activator.CreateInstance(type);
             InitInterop(pythonInterop);

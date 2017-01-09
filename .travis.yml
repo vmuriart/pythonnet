@@ -11,4 +11,4 @@ install:
 
 script:
   - export PYTHONPATH=`pwd`:$PYTHONPATH
-  - python3 src/tests/runtests.py
+  - python src/tests/runtests.py

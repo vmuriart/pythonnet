@@ -4,24 +4,14 @@
 # https://github.com/fossasia/kniteditor/blob/master/.travis.yml
 # https://github.com/fossasia/kniteditor/tree/master/mac-build
 
-set -e
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+Miniconda-latest-MacOSX-x86_64.sh -b
 
-HERE="`dirname \"$0\"`"
-USER="$1"
-cd "$HERE"
-
-echo "# brew --cache"
-brew --cache
-echo "# brew update"
-brew update
-
-echo "# install python3"
-brew install python3
 echo -n "Python version: "
-python3 --version
-python3 -m pip install --upgrade pip
+python --version
+python -m pip install --upgrade pip
 
-python3 -m pip install six
-python3 -m pip install pycparser
+python -m pip install six
+python -m pip install pycparser
 
-python3 setup.py build_ext --inplace
+python setup.py build_ext --inplace

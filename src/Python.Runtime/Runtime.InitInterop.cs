@@ -1,6 +1,7 @@
 namespace Python.Runtime
 {
     using System;
+    using System.IO;
     using System.Reflection;
     using System.Runtime.InteropServices;
 #if !NET46
@@ -22,11 +23,9 @@ namespace Python.Runtime
     {
         static Runtime()
         {
-#if NET46
-            InitInterop("c:\\projects\\pythonnet\\r6\\subprojects\\pythonnet\\src\\Python.Runtime.Interop\\bin\\Debug\\net46\\Python.Runtime.Interop.dll");
-#else
-            InitInterop("c:\\projects\\pythonnet\\r6\\subprojects\\pythonnet\\src\\Python.Runtime.Interop\\bin\\Debug\\netstandard1.5\\Python.Runtime.Interop.dll");
-#endif
+            var binLocation = typeof(Runtime).GetTypeInfo().Assembly.Location;
+            var interopDllPath = Path.Combine(Path.GetDirectoryName(binLocation), "Python.Runtime.Interop.dll");
+            InitInterop(interopDllPath);
         }
 
         internal static void InitInterop(IPythonInterop pythonInterop)
@@ -59,7 +58,7 @@ namespace Python.Runtime
 #else
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(interopDllPath);
 #endif
-            var type = assembly.GetType("Python.Runtime.PythonInterop");
+            var type = assembly.GetType("Python.Runtime.Interop.PythonInterop");
             var pythonInterop = (IPythonInterop)Activator.CreateInstance(type);
             InitInterop(pythonInterop);
         }

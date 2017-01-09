@@ -1,11 +1,11 @@
-﻿using System;
-
-namespace Python.Runtime
+﻿namespace Python.Runtime.Interop
 {
+    using System;
     using System.Runtime.InteropServices;
 
     using InteropContracts;
-    public class PythonNativeMethodsInterop: IPythonNativeMethodsInterop
+
+    public class PythonNativeMethodsInterop : IPythonNativeMethodsInterop
     {
 #if (MONO_LINUX || MONO_OSX)
         static public IntPtr LoadLibrary(string fileName) {
@@ -106,7 +106,5 @@ namespace Python.Runtime
             return FreeLibrary(hModule);
         }
 #endif
-
-
     }
 }

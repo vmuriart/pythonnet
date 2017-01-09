@@ -1,11 +1,10 @@
-﻿namespace Python.Runtime
+﻿namespace Python.Runtime.Interop
 {
-    using System;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.InteropServices;
 
-    using Python.Runtime.InteropContracts;
+    using InteropContracts;
 
     public class PythonInterop : IPythonInterop
     {
@@ -39,19 +38,24 @@
             }
         }
 
+        public void InitExceptionOffset()
+        {
+            CopyStaticFields<ExceptionOffset, Python.Runtime.ExceptionOffset>();
+        }
+
         public void InitTypeOffset()
         {
-            CopyStaticFields<Interop.TypeOffset, TypeOffset>();
+            CopyStaticFields<TypeOffset, Python.Runtime.TypeOffset>();
         }
 
         private void CopyStaticFields<TFrom, TTo>()
         {
-            Type type = typeof(TFrom);
+            var type = typeof(TFrom);
             var actualValues = type.GetFields().ToDictionary(x => x.Name);
 
-            Type targetType = typeof(TTo);
+            var targetType = typeof(TTo);
             var targetFields = targetType.GetFields();
-            for (int i = 0; i < targetFields.Length; i++)
+            for (var i = 0; i < targetFields.Length; i++)
             {
                 FieldInfo actualField;
                 if (actualValues.TryGetValue(targetFields[i].Name, out actualField))
@@ -59,11 +63,6 @@
                     targetFields[i].SetValue(null, actualField.GetValue(null));
                 }
             }
-        }
-
-        public void InitExceptionOffset()
-        {
-            CopyStaticFields<Interop.ExceptionOffset, ExceptionOffset>();
         }
     }
 }

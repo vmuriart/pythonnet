@@ -157,6 +157,7 @@ namespace Python.Runtime
                     "import atexit, clr\n" +
                     "atexit.register(clr._AtExit)\n";
                 PyObject r = PythonEngine.RunString(code);
+                Exceptions.Clear();
                 if (r != null)
                 {
                     r.Dispose();

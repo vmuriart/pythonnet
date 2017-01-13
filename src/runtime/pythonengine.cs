@@ -164,6 +164,7 @@ namespace Python.Runtime
                     "import atexit, clr\n" +
                     "atexit.register(clr._AtExit)\n";
                 PythonEngine.Exec(code);
+                Exceptions.Clear(); // may need to be inside EXEC??
 
                 // Load the clr.py resource into the clr module
                 IntPtr clr = Python.Runtime.ImportHook.GetCLRModule();

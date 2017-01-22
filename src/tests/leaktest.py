@@ -43,10 +43,10 @@ class LeakTest(object):
         end = System.Environment.WorkingSet
         diff = end - start
         if diff > 0:
-            diff = '+%d' % diff
+            diff = '+{0:d}'.format(diff)
         else:
-            diff = '%d' % diff
-        print("  start: %d  end: %d diff: %s" % (start, end, diff))
+            diff = '{0:d}'.format(diff)
+        print("  start: {0:d}  end: {1:d} diff: {2!s}".format(start, end, diff))
         print("")
 
     def run(self):

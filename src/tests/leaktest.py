@@ -203,10 +203,10 @@ class LeakTest(object):
             testob.PublicEvent -= EventTest.StaticHandler
 
             # Function event handler
-            dict = {'value': None}
+            dict_ = {'value': None}
 
-            def handler(sender, args, dict=dict):
-                dict['value'] = args.value
+            def handler(sender, args, dict_=dict_):
+                dict_['value'] = args.value
 
             testob.PublicEvent += handler
             testob.PublicEvent(testob, TestEventArgs(10))

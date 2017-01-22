@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# TODO: Add tests for ClassicClass, NewStyleClass?
 
 import unittest
 
@@ -6,16 +7,6 @@ import Python.Test as Test
 import System
 
 from _compat import DictProxyType, range
-
-
-class ClassicClass:
-    def kind(self):
-        return 'classic'
-
-
-class NewStyleClass(object):
-    def kind(self):
-        return 'new-style'
 
 
 class ClassTests(unittest.TestCase):
@@ -63,7 +54,7 @@ class ClassTests(unittest.TestCase):
             from Python.Test import InternalClass
 
         with self.assertRaises(AttributeError):
-            x = Test.InternalClass
+            _ = Test.InternalClass
 
     def test_basic_subclass(self):
         """Test basic subclass of a managed class."""
@@ -99,7 +90,7 @@ class ClassTests(unittest.TestCase):
                 self.name = name
 
         # This failed in earlier versions
-        inst = SubClass('test')
+        _ = SubClass('test')
 
     def test_subclass_with_various_constructors(self):
         """Test subclass of a managed class with various constructors."""
@@ -145,19 +136,18 @@ class ClassTests(unittest.TestCase):
     # test recursion
     # test
 
-
     def test_ienumerable_iteration(self):
         """Test iteration over objects supporting IEnumerable."""
         from Python.Test import ClassTest
 
-        list = ClassTest.GetArrayList()
+        list_ = ClassTest.GetArrayList()
 
-        for item in list:
+        for item in list_:
             self.assertTrue((item > -1) and (item < 10))
 
-        dict = ClassTest.GetHashtable()
+        dict_ = ClassTest.GetHashtable()
 
-        for item in dict:
+        for item in dict_:
             cname = item.__class__.__name__
             self.assertTrue(cname.endswith('DictionaryEntry'))
 
@@ -214,7 +204,7 @@ class ClassTests(unittest.TestCase):
         from System import TimeSpan
 
         for _ in range(100):
-            TimeSpan.new_method = lambda self: self.TotalMinutes
+            TimeSpan.new_method = lambda self_: self_.TotalMinutes
             ts = TimeSpan.FromHours(1)
             self.assertTrue(ts.new_method() == 60)
             del TimeSpan.new_method

@@ -18,12 +18,7 @@ import threading
 import time
 
 from _compat import range, thread
-
-
-def dprint(msg):
-    # Debugging helper to trace thread-related tests.
-    if 1:
-        print(msg)
+from utils import dprint
 
 
 class StressTest(object):

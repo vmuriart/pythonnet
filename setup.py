@@ -93,24 +93,24 @@ def _find_msbuild_tool(tool="msbuild.exe", use_windows_sdk=False):
     for sdk_name, path in paths_to_check:
         path = os.path.join(path, tool)
         if os.path.exists(path):
-            log.info("Using %s from %s" % (tool, sdk_name))
+            log.info("Using {0!s} from {1!s}".format(tool, sdk_name))
             return path
 
-    raise RuntimeError("%s could not be found" % tool)
+    raise RuntimeError("{0!s} could not be found".format(tool))
 
 
 if DEVTOOLS == "MsDev":
-    _xbuild = "\"%s\"" % _find_msbuild_tool("msbuild.exe")
+    _xbuild = "\"{0!s}\"".format(_find_msbuild_tool("msbuild.exe"))
     _defines_sep = ";"
-    _config = "%sWin" % CONFIG
+    _config = "{0!s}Win".format(CONFIG)
 
 elif DEVTOOLS == "Mono":
     _xbuild = "xbuild"
     _defines_sep = ","
-    _config = "%sMono" % CONFIG
+    _config = "{0!s}Mono".format(CONFIG)
 
 else:
-    raise NotImplementedError("DevTools %s not supported (use MsDev or Mono)" % DEVTOOLS)
+    raise NotImplementedError("DevTools {0!s} not supported (use MsDev or Mono)".format(DEVTOOLS))
 
 
 class PythonNET_BuildExt(build_ext):
@@ -138,9 +138,9 @@ class PythonNET_BuildExt(build_ext):
             unicode_width = ctypes.sizeof(ctypes.c_wchar)
 
         defines = [
-            "PYTHON%d%d" % (sys.version_info[:2]),
-            "PYTHON%d" % (sys.version_info[:1]),  # Python Major Version
-            "UCS%d" % unicode_width,
+            "PYTHON{0:d}{1:d}".format(*(sys.version_info[:2])),
+            "PYTHON{0:d}".format((sys.version_info[:1])),  # Python Major Version
+            "UCS{0:d}".format(unicode_width),
         ]
 
         if CONFIG == "Debug":
@@ -180,19 +180,19 @@ class PythonNET_BuildExt(build_ext):
         cmd = [
             _xbuild,
             "pythonnet.sln",
-            "/p:Configuration=%s" % _config,
-            "/p:Platform=%s" % PLATFORM,
-            "/p:DefineConstants=\"%s\"" % _defines_sep.join(defines),
-            "/p:PythonBuildDir=\"%s\"" % os.path.abspath(dest_dir),
-            "/p:PythonInteropFile=\"%s\"" % os.path.basename(interop_file),
-            "/verbosity:%s" % VERBOSITY,
+            "/p:Configuration={0!s}".format(_config),
+            "/p:Platform={0!s}".format(PLATFORM),
+            "/p:DefineConstants=\"{0!s}\"".format(_defines_sep.join(defines)),
+            "/p:PythonBuildDir=\"{0!s}\"".format(os.path.abspath(dest_dir)),
+            "/p:PythonInteropFile=\"{0!s}\"".format(os.path.basename(interop_file)),
+            "/verbosity:{0!s}".format(VERBOSITY),
         ]
 
         manifest = self._get_manifest(dest_dir)
         if manifest:
-            cmd.append("/p:PythonManifest=\"%s\"" % manifest)
+            cmd.append("/p:PythonManifest=\"{0!s}\"".format(manifest))
 
-        self.announce("Building: %s" % " ".join(cmd))
+        self.announce("Building: {0!s}".format(" ".join(cmd)))
         use_shell = True if DEVTOOLS == "Mono" else False
         check_call(" ".join(cmd + ["/t:Clean"]), shell=use_shell)
         check_call(" ".join(cmd + ["/t:Build"]), shell=use_shell)
@@ -204,8 +204,8 @@ class PythonNET_BuildExt(build_ext):
         if DEVTOOLS == "MsDev" and sys.version_info[:2] > (2, 5):
             mt = _find_msbuild_tool("mt.exe", use_windows_sdk=True)
             manifest = os.path.abspath(os.path.join(build_dir, "app.manifest"))
-            cmd = [mt, '-inputresource:"%s"' % sys.executable, '-out:"%s"' % manifest]
-            self.announce("Extracting manifest from %s" % sys.executable)
+            cmd = [mt, '-inputresource:"{0!s}"'.format(sys.executable), '-out:"{0!s}"'.format(manifest)]
+            self.announce("Extracting manifest from {0!s}".format(sys.executable))
             check_call(" ".join(cmd), shell=False)
             return manifest
 
@@ -233,23 +233,23 @@ class PythonNET_BuildExt(build_ext):
         nuget = os.path.join("tools", "nuget", "nuget.exe")
         use_shell = False
         if DEVTOOLS == "Mono":
-            nuget = "mono %s" % nuget
+            nuget = "mono {0!s}".format(nuget)
             use_shell = True
 
-        cmd = "%s update -self" % nuget
-        self.announce("Updating NuGet: %s" % cmd)
+        cmd = "{0!s} update -self".format(nuget)
+        self.announce("Updating NuGet: {0!s}".format(cmd))
         check_call(cmd, shell=use_shell)
 
-        cmd = "%s restore pythonnet.sln -o packages" % nuget
-        self.announce("Installing packages: %s" % cmd)
+        cmd = "{0!s} restore pythonnet.sln -o packages".format(nuget)
+        self.announce("Installing packages: {0!s}".format(cmd))
         check_call(cmd, shell=use_shell)
 
 
 class PythonNET_InstallLib(install_lib):
     def install(self):
         if not os.path.isdir(self.build_dir):
-            self.warn("'%s' does not exist -- no Python modules to install" %
-                      self.build_dir)
+            self.warn("'{0!s}' does not exist -- no Python modules to install".format(
+                      self.build_dir))
             return
 
         if not os.path.exists(self.install_dir):
@@ -304,7 +304,7 @@ def _get_interop_filename():
     as most windows users won't have Clang installed, which is
     required to generate the file.
     """
-    interop_file = "interop%d%s%s.cs" % (sys.version_info[0], sys.version_info[1], getattr(sys, "abiflags", ""))
+    interop_file = "interop{0:d}{1!s}{2!s}.cs".format(sys.version_info[0], sys.version_info[1], getattr(sys, "abiflags", ""))
     return os.path.join("src", "runtime", interop_file)
 
 

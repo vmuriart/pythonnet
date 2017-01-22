@@ -45,14 +45,14 @@ class StressTest(object):
 
     def runThread(self, iterations):
         thread_id = thread.get_ident()
-        dprint("thread %s starting..." % thread_id)
+        dprint("thread {0!s} starting...".format(thread_id))
         time.sleep(0.1)
         for i in range(iterations):
-            dprint("thread %s iter %d start" % (thread_id, i))
+            dprint("thread {0!s} iter {1:d} start".format(thread_id, i))
             self.module.main()
-            dprint("thread %s iter %d end" % (thread_id, i))
+            dprint("thread {0!s} iter {1:d} end".format(thread_id, i))
         self.done.append(None)
-        dprint("thread %s done" % thread_id)
+        dprint("thread {0!s} done".format(thread_id))
 
     def stressTest(self, iterations=1, threads=1):
         args = (iterations,)

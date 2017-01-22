@@ -15,20 +15,20 @@ class ThreadTests(unittest.TestCase):
         """Test a call to managed code that then calls back into Python."""
         from Python.Test import ThreadTest
 
-        dprint("thread %s SimpleCallBack" % thread.get_ident())
+        dprint("thread {0!s} SimpleCallBack".format(thread.get_ident()))
         result = ThreadTest.CallEchoString("spam")
         self.assertTrue(result == "spam")
-        dprint("thread %s SimpleCallBack ret" % thread.get_ident())
+        dprint("thread {0!s} SimpleCallBack ret".format(thread.get_ident()))
 
     def test_double_callback_to_python(self):
         """Test a call to managed code that then calls back into Python
            that then calls managed code that then calls Python again."""
         from Python.Test import ThreadTest
 
-        dprint("thread %s DoubleCallBack" % thread.get_ident())
+        dprint("thread {0!s} DoubleCallBack".format(thread.get_ident()))
         result = ThreadTest.CallEchoString2("spam")
         self.assertTrue(result == "spam")
-        dprint("thread %s DoubleCallBack ret" % thread.get_ident())
+        dprint("thread {0!s} DoubleCallBack ret".format(thread.get_ident()))
 
     def test_python_thread_calls_to_clr(self):
         """Test calls by Python-spawned threads into managed code."""
@@ -40,11 +40,11 @@ class ThreadTests(unittest.TestCase):
         def run_thread():
             for i in range(10):
                 time.sleep(0.1)
-                dprint("thread %s %d" % (thread.get_ident(), i))
-                mstr = System.String("thread %s %d" % (thread.get_ident(), i))
+                dprint("thread {0!s} {1:d}".format(thread.get_ident(), i))
+                mstr = System.String("thread {0!s} {1:d}".format(thread.get_ident(), i))
                 dprint(mstr.ToString())
                 done.append(None)
-                dprint("thread %s %d done" % (thread.get_ident(), i))
+                dprint("thread {0!s} {1:d} done".format(thread.get_ident(), i))
 
         def start_threads(count):
             for _ in range(count):

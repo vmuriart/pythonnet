@@ -314,7 +314,7 @@ class Wordpad(WinForms.Form):
             self.richTextBox.Text = data
             self.doctype = 1
 
-        self.Text = 'Python Wordpad - %s' % filename
+        self.Text = 'Python Wordpad - {0!s}'.format(filename)
         self.richTextBox.Select(0, 0)
 
     def SaveDocument(self):
@@ -326,7 +326,7 @@ class Wordpad(WinForms.Form):
             filename = self.saveFileDialog.FileName
 
         filename = self.filename = filename.lower()
-        self.Text = 'Python Wordpad - %s' % filename
+        self.Text = 'Python Wordpad - {0!s}'.format(filename)
 
         self.richTextBox.Select(0, 0)
 

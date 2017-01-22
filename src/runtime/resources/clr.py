@@ -47,7 +47,7 @@ class clrproperty(object):
 
     def __set__(self, instance, value):
         if not self.fset:
-            raise AttributeError("%s is read-only" % self.__name__)
+            raise AttributeError("{0!s} is read-only".format(self.__name__))
         return self.fset.__get__(instance, None)(value)
 
 

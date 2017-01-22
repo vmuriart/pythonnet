@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Collections.Generic;
 using NUnit.Framework;
 using Python.Runtime;
 

@@ -142,10 +142,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="pyrestart.cs" />
     <Compile Include="pyimport.cs" />
-    <Compile Include="pyiter.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="pyiter.cs" />
     <Compile Include="pyobject.cs" />
     <Compile Include="pythonexception.cs" />
   </ItemGroup>

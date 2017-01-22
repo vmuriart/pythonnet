@@ -47,10 +47,10 @@ test_modules = (
     'test_thread',
     'test_docstring',
 
-    # FIXME: Fails due to unhandled exception
-    # 'test_engine',
+    # FIXME: Has tests that are being skipped.
+    'test_engine',
 
-    # FIXME: Fails in Linux
+    # FIXME: Randomly fails/passes on both Windows/Linux.
     # 'test_subclass',
 )
 

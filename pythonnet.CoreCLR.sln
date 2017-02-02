@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26127.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Console", "src\console\Console.xproj", "{5BF55E20-325C-45B3-86FC-2FDBBD91901F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "console", "src\console\console.csproj", "{5BF55E20-325C-45B3-86FC-2FDBBD91901F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Runtime", "src\Python.Runtime\Python.Runtime.xproj", "{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Python.Runtime", "src\Python.Runtime\Python.Runtime.csproj", "{C41B9F67-571D-4852-B7C4-B54E84DCBCDC}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "embed_tests", "src\embed_tests\embed_tests.xproj", "{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "embed_tests", "src\embed_tests\embed_tests.csproj", "{9F91A9DC-D7B3-45A9-96FF-57AACC1B959A}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Net", "src\Python.Net\Python.Net.xproj", "{F4E01C59-8951-451F-86F5-EF61CAAA786F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Python.Net", "src\Python.Net\Python.Net.csproj", "{F4E01C59-8951-451F-86F5-EF61CAAA786F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Python.Runtime.Interop", "src\Python.Runtime.Interop\Python.Runtime.Interop.xproj", "{7395D369-8AEA-40F2-AD38-138B422FAD3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Python.Runtime.Interop", "src\Python.Runtime.Interop\Python.Runtime.Interop.csproj", "{7395D369-8AEA-40F2-AD38-138B422FAD3B}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ClrCoder", "..\ClrCoder\src\ClrCoder\ClrCoder.xproj", "{128376A9-B458-4CDC-97B8-394BF4C61226}"
 EndProject

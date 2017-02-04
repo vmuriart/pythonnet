@@ -1,76 +1,37 @@
 using System;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using Python.Runtime.InteropContracts;
 
 namespace Python.Runtime
 {
     [SuppressUnmanagedCodeSecurity]
     internal static class NativeMethods
     {
-#if MONO_LINUX || MONO_OSX
-        private static int RTLD_NOW = 0x2;
-        private static int RTLD_SHARED = 0x20;
-#if MONO_OSX
-        private static IntPtr RTLD_DEFAULT = new IntPtr(-2);
-        private const string NativeDll = "__Internal";
-#elif MONO_LINUX
-        private static IntPtr RTLD_DEFAULT = IntPtr.Zero;
-        private const string NativeDll = "libdl.so";
-#endif
+        private static IPythonNativeMethodsInterop _interop;
 
-        public static IntPtr LoadLibrary(string fileName)
+        internal static void InitInterop(IPythonNativeMethodsInterop interop)
         {
-            return dlopen(fileName, RTLD_NOW | RTLD_SHARED);
+            _interop = interop;
         }
 
-        public static void FreeLibrary(IntPtr handle)
+        public static IntPtr LoadLibrary(string dllToLoad)
         {
-            dlclose(handle);
+            return _interop.LoadLibrary(dllToLoad);
         }
 
-        public static IntPtr GetProcAddress(IntPtr dllHandle, string name)
+        public static bool FreeLibrary(IntPtr hModule)
         {
-            // look in the exe if dllHandle is NULL
-            if (dllHandle == IntPtr.Zero)
-            {
-                dllHandle = RTLD_DEFAULT;
-            }
-
-            // clear previous errors if any
-            dlerror();
-            IntPtr res = dlsym(dllHandle, name);
-            IntPtr errPtr = dlerror();
-            if (errPtr != IntPtr.Zero)
-            {
-                throw new Exception("dlsym: " + Marshal.PtrToStringAnsi(errPtr));
-            }
-            return res;
+            return _interop.FreeLibrary(hModule);
         }
 
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlopen(String fileName, int flags);
-
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlsym(IntPtr handle, String symbol);
-
-        [DllImport(NativeDll)]
-        private static extern int dlclose(IntPtr handle);
-
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlerror();
-#else // Windows
-        private const string NativeDll = "kernel32.dll";
-
-        [DllImport(NativeDll)]
-        public static extern IntPtr LoadLibrary(string dllToLoad);
-
-        [DllImport(NativeDll)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-        [DllImport(NativeDll)]
-        public static extern bool FreeLibrary(IntPtr hModule);
-#endif
+        public static IntPtr GetProcAddress(IntPtr hModule, string procedureName)
+        {
+            return _interop.GetProcAddress(hModule, procedureName);
+        }
     }
 
     /// <summary>
@@ -170,11 +131,40 @@ namespace Python.Runtime
         internal static bool IsPython2;
         internal static bool IsPython3;
 
+        public static void InitInterop()
+        {
+            // TODO: This was hacked together by trial and error. Is it robust enough?
+            Assembly interopAssembly;
+            try
+            {
+                // Embedded tests load using this one
+                interopAssembly = Assembly.LoadFrom("Python.Runtime.Interop.dll");
+            }
+            catch (IOException)
+            {
+                // Python tests load using this method.
+                Assembly executingAssembly = Assembly.GetExecutingAssembly();
+                string cwd = Path.GetDirectoryName(executingAssembly.Location);
+                string interopPath = Path.Combine(cwd, "Python.Runtime.Interop.dll");
+                interopAssembly = Assembly.LoadFrom(interopPath);
+            }
+            Type type = interopAssembly.GetType("Python.Runtime.Interop.PythonInterop");
+
+            var pythonInterop = (IPythonInterop)Activator.CreateInstance(type);
+            InitInterop(pythonInterop);
+        }
+
+        internal static void InitInterop(IPythonInterop pythonInterop)
+        {
+            NativeMethods.InitInterop(pythonInterop.NativeMethods);
+        }
+
         /// <summary>
         /// Initialize the runtime...
         /// </summary>
         internal static void Initialize()
         {
+            InitInterop();
             Is32Bit = IntPtr.Size == 4;
             IsPython2 = pyversionnumber < 30;
             IsPython3 = pyversionnumber >= 30;

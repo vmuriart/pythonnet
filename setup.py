@@ -381,6 +381,7 @@ setup(
     data_files=[
         ("{install_platlib}", [
             "{build_lib}/Python.Runtime.dll",
+            "{build_lib}/Python.Runtime.Interop.dll",
             "Python.Runtime.dll.config"]),
     ],
     cmdclass={

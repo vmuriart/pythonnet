@@ -71,15 +71,16 @@ namespace Python.Runtime
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class ObjectOffset
     {
-        static ObjectOffset()
+        internal static void Init()
         {
             int size = IntPtr.Size;
             int n = 0; // Py_TRACE_REFS add two pointers to PyObject_HEAD
-#if Py_DEBUG
-            _ob_next = 0;
-            _ob_prev = 1 * size;
-            n = 2;
-#endif
+            if (Runtime.IsPyDebug)
+            {
+                _ob_next = 0;
+                _ob_prev = 1 * size;
+                n = 2;
+            }
             ob_refcnt = (n + 0) * size;
             ob_type = (n + 1) * size;
             ob_dict = (n + 2) * size;
@@ -113,17 +114,20 @@ namespace Python.Runtime
             {
                 return ExceptionOffset.Size();
             }
-#if Py_DEBUG
-            return 6 * IntPtr.Size;
-#else
-            return 4 * IntPtr.Size;
-#endif
+            if (Runtime.IsPyDebug)
+            {
+                return 6 * IntPtr.Size;
+            }
+            else
+            {
+                return 4 * IntPtr.Size;
+            }
         }
 
-#if Py_DEBUG
+        //if (Runtime.isPy_DEBUG) {
         public static int _ob_next;
         public static int _ob_prev;
-#endif
+//}
         public static int ob_refcnt;
         public static int ob_type;
         private static int ob_dict;
@@ -204,7 +208,6 @@ namespace Python.Runtime
 
         public static int name = 0;
     }
-#endif // PYTHON3
 
     /// <summary>
     /// TypeFlags(): The actual bit values for the Type Flags stored
@@ -214,7 +217,29 @@ namespace Python.Runtime
     /// </summary>
     internal class TypeFlags
     {
-#if PYTHON2 // these flags were removed in Python 3
+        internal static int Default = 0;
+
+        internal static void Init()
+        {
+            if (Runtime.pyversionnumber >= 23 && Runtime.pyversionnumber <= 27)
+            {
+                Default = (HaveGetCharBuffer | HaveSequenceIn | HaveInPlaceOps | HaveRichCompare | HaveWeakRefs
+                           | HaveIter | HaveClass | HaveStacklessExtension);
+
+                if (Runtime.pyversionnumber >= 25)
+                {
+                    Default |= HaveIndex;
+                }
+            }
+
+            if (Runtime.IsPython3)
+            {
+                Default = (HaveStacklessExtension | HaveVersionTag);
+            }
+        }
+
+
+//#if PYTHON2 // these flags were removed in Python 3
         public static int HaveGetCharBuffer = (1 << 0);
         public static int HaveSequenceIn = (1 << 1);
         public static int GC = 0;
@@ -224,7 +249,7 @@ namespace Python.Runtime
         public static int HaveWeakRefs = (1 << 6);
         public static int HaveIter = (1 << 7);
         public static int HaveClass = (1 << 8);
-#endif
+//#endif
         public static int HeapType = (1 << 9);
         public static int BaseType = (1 << 10);
         public static int Ready = (1 << 12);
@@ -251,24 +276,6 @@ namespace Python.Runtime
         public static int DictSubclass = (1 << 29);
         public static int BaseExceptionSubclass = (1 << 30);
         public static int TypeSubclass = (1 << 31);
-
-#if PYTHON2 // Default flags for Python 2
-        public static int Default = (
-            HaveGetCharBuffer |
-            HaveSequenceIn |
-            HaveInPlaceOps |
-            HaveRichCompare |
-            HaveWeakRefs |
-            HaveIter |
-            HaveClass |
-            HaveStacklessExtension |
-            HaveIndex |
-            0);
-#elif PYTHON3 // Default flags for Python 3
-        public static int Default = (
-            HaveStacklessExtension |
-            HaveVersionTag);
-#endif
     }
 
 
@@ -282,7 +289,7 @@ namespace Python.Runtime
         static ArrayList keepAlive;
         static Hashtable pmap;
 
-        static Interop()
+        internal static void Init()
         {
             // Here we build a mapping of PyTypeObject slot names to the
             // appropriate prototype (delegate) type to use for the slot.
@@ -327,9 +334,10 @@ namespace Python.Runtime
             pmap["nb_add"] = p["BinaryFunc"];
             pmap["nb_subtract"] = p["BinaryFunc"];
             pmap["nb_multiply"] = p["BinaryFunc"];
-#if PYTHON2
-            pmap["nb_divide"] = p["BinaryFunc"];
-#endif
+            if (Runtime.IsPython2)
+            {
+                pmap["nb_divide"] = p["BinaryFunc"];
+            }
             pmap["nb_remainder"] = p["BinaryFunc"];
             pmap["nb_divmod"] = p["BinaryFunc"];
             pmap["nb_power"] = p["TernaryFunc"];
@@ -352,9 +360,10 @@ namespace Python.Runtime
             pmap["nb_inplace_add"] = p["BinaryFunc"];
             pmap["nb_inplace_subtract"] = p["BinaryFunc"];
             pmap["nb_inplace_multiply"] = p["BinaryFunc"];
-#if PYTHON2
-            pmap["nb_inplace_divide"] = p["BinaryFunc"];
-#endif
+            if (Runtime.IsPython2)
+            {
+                pmap["nb_inplace_divide"] = p["BinaryFunc"];
+            }
             pmap["nb_inplace_remainder"] = p["BinaryFunc"];
             pmap["nb_inplace_power"] = p["TernaryFunc"];
             pmap["nb_inplace_lshift"] = p["BinaryFunc"];

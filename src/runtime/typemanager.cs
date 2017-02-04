@@ -402,27 +402,32 @@ namespace Python.Runtime
         internal static IntPtr AllocateTypeObject(string name)
         {
             IntPtr type = Runtime.PyType_GenericAlloc(Runtime.PyTypeType, 0);
-
+            IntPtr temp;
+            IntPtr raw;
             // Cheat a little: we'll set tp_name to the internal char * of
             // the Python version of the type name - otherwise we'd have to
             // allocate the tp_name and would have no way to free it.
-#if PYTHON3
-            // For python3 we leak two objects. One for the ASCII representation
-            // required for tp_name, and another for the Unicode representation
-            // for ht_name.
-            IntPtr temp = Runtime.PyBytes_FromString(name);
-            IntPtr raw = Runtime.PyBytes_AS_STRING(temp);
-            temp = Runtime.PyUnicode_FromString(name);
-#elif PYTHON2
-            IntPtr temp = Runtime.PyString_FromString(name);
-            IntPtr raw = Runtime.PyString_AS_STRING(temp);
-#endif
+            if (Runtime.IsPython3)
+            {
+                // For python3 we leak two objects. One for the ASCII representation
+                // required for tp_name, and another for the Unicode representation
+                // for ht_name.
+                temp = Runtime.PyBytes_FromString(name);
+                raw = Runtime.PyBytes_AS_STRING(temp);
+                temp = Runtime.PyUnicode_FromString(name);
+            }
+            else
+            {
+                temp = Runtime.PyString_FromString(name);
+                raw = Runtime.PyString_AS_STRING(temp);
+            }
             Marshal.WriteIntPtr(type, TypeOffset.tp_name, raw);
             Marshal.WriteIntPtr(type, TypeOffset.name, temp);
 
-#if PYTHON3
-            Marshal.WriteIntPtr(type, TypeOffset.qualname, temp);
-#endif
+            if (Runtime.IsPython3)
+            {
+                Marshal.WriteIntPtr(type, TypeOffset.qualname, temp);
+            }
 
             long ptr = type.ToInt64(); // 64-bit safe
 
@@ -435,11 +440,14 @@ namespace Python.Runtime
             temp = new IntPtr(ptr + TypeOffset.mp_length);
             Marshal.WriteIntPtr(type, TypeOffset.tp_as_mapping, temp);
 
-#if PYTHON3
-            temp = new IntPtr(ptr + TypeOffset.bf_getbuffer);
-#elif PYTHON2
-            temp = new IntPtr(ptr + TypeOffset.bf_getreadbuffer);
-#endif
+            if (Runtime.IsPython3)
+            {
+                temp = new IntPtr(ptr + TypeOffset.bf_getbuffer);
+            }
+            else
+            {
+                temp = new IntPtr(ptr + TypeOffset.bf_getreadbuffer);
+            }
             Marshal.WriteIntPtr(type, TypeOffset.tp_as_buffer, temp);
             return type;
         }

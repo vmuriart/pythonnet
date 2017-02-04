@@ -12,18 +12,13 @@ namespace Python.Runtime
         static CLRModule root;
         static MethodWrapper hook;
         static IntPtr py_clr_module;
-
-#if PYTHON3
         static IntPtr module_def = IntPtr.Zero;
 
         internal static void InitializeModuleDef()
         {
             if (module_def == IntPtr.Zero)
-            {
                 module_def = ModuleDefOffset.AllocModuleDef("clr");
-            }
         }
-#endif
 
         /// <summary>
         /// Initialization performed on startup of the Python runtime.
@@ -47,21 +42,24 @@ namespace Python.Runtime
 
             root = new CLRModule();
 
-#if PYTHON3
-            // create a python module with the same methods as the clr module-like object
-            InitializeModuleDef();
-            py_clr_module = Runtime.PyModule_Create2(module_def, 3);
+            if (Runtime.IsPython3)
+            {
+                // create a python module with the same methods as the clr module-like object
+                InitializeModuleDef();
+                py_clr_module = Runtime.PyModule_Create2(module_def, 3);
 
-            // both dicts are borrowed references
-            IntPtr mod_dict = Runtime.PyModule_GetDict(py_clr_module);
-            IntPtr clr_dict = Runtime._PyObject_GetDictPtr(root.pyHandle); // PyObject**
-            clr_dict = (IntPtr)Marshal.PtrToStructure(clr_dict, typeof(IntPtr));
+                // both dicts are borrowed references
+                IntPtr mod_dict = Runtime.PyModule_GetDict(py_clr_module);
+                IntPtr clr_dict = Runtime._PyObject_GetDictPtr(root.pyHandle); // PyObject**
+                clr_dict = (IntPtr)Marshal.PtrToStructure(clr_dict, typeof(IntPtr));
 
-            Runtime.PyDict_Update(mod_dict, clr_dict);
-#elif PYTHON2
-            Runtime.XIncref(root.pyHandle); // we are using the module two times
-            py_clr_module = root.pyHandle; // Alias handle for PY2/PY3
-#endif
+                Runtime.PyDict_Update(mod_dict, clr_dict);
+            }
+            else
+            {
+                Runtime.XIncref(root.pyHandle); // we are using the module two times
+                py_clr_module = root.pyHandle; // Alias handle for PY2/PY3
+            }
             Runtime.PyDict_SetItemString(dict, "CLR", py_clr_module);
             Runtime.PyDict_SetItemString(dict, "clr", py_clr_module);
         }

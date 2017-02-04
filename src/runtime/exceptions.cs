@@ -168,13 +168,11 @@ namespace Python.Runtime
 
             Marshal.WriteIntPtr(ob, ExceptionOffset.args, args);
 
-#if PYTHON3
-            if (e.InnerException != null)
+            if (Runtime.IsPython3 && e.InnerException != null)
             {
                 IntPtr cause = CLRObject.GetInstHandle(e.InnerException);
                 Marshal.WriteIntPtr(ob, ExceptionOffset.cause, cause);
             }
-#endif
         }
 
         /// <summary>
@@ -371,9 +369,9 @@ namespace Python.Runtime
         public static IntPtr Exception;
         public static IntPtr StopIteration;
         public static IntPtr GeneratorExit;
-#if PYTHON2
+
         public static IntPtr StandardError;
-#endif
+
         public static IntPtr ArithmeticError;
         public static IntPtr LookupError;
 

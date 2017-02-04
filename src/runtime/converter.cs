@@ -491,29 +491,32 @@ namespace Python.Runtime
                     return true;
 
                 case TypeCode.Byte:
-#if PYTHON3
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
+                    if (Runtime.IsPython3)
                     {
-                        if (Runtime.PyBytes_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
                         {
-                            op = Runtime.PyBytes_AS_STRING(value);
-                            result = (byte)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyBytes_Size(value) == 1)
+                            {
+                                op = Runtime.PyBytes_AS_STRING(value);
+                                result = (byte)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#elif PYTHON2
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
+                    else
                     {
-                        if (Runtime.PyString_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
                         {
-                            op = Runtime.PyString_AS_STRING(value);
-                            result = (byte)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyString_Size(value) == 1)
+                            {
+                                op = Runtime.PyString_AS_STRING(value);
+                                result = (byte)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#endif
 
                     op = Runtime.PyNumber_Int(value);
                     if (op == IntPtr.Zero)
@@ -536,29 +539,32 @@ namespace Python.Runtime
                     return true;
 
                 case TypeCode.SByte:
-#if PYTHON3
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
+                    if (Runtime.IsPython3)
                     {
-                        if (Runtime.PyBytes_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
                         {
-                            op = Runtime.PyBytes_AS_STRING(value);
-                            result = (byte)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyBytes_Size(value) == 1)
+                            {
+                                op = Runtime.PyBytes_AS_STRING(value);
+                                result = (byte)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#elif PYTHON2
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
+                    else
                     {
-                        if (Runtime.PyString_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
                         {
-                            op = Runtime.PyString_AS_STRING(value);
-                            result = (sbyte)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyString_Size(value) == 1)
+                            {
+                                op = Runtime.PyString_AS_STRING(value);
+                                result = (sbyte)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#endif
 
                     op = Runtime.PyNumber_Int(value);
                     if (op == IntPtr.Zero)
@@ -581,29 +587,32 @@ namespace Python.Runtime
                     return true;
 
                 case TypeCode.Char:
-#if PYTHON3
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
+                    if (Runtime.IsPython3)
                     {
-                        if (Runtime.PyBytes_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyBytesType))
                         {
-                            op = Runtime.PyBytes_AS_STRING(value);
-                            result = (byte)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyBytes_Size(value) == 1)
+                            {
+                                op = Runtime.PyBytes_AS_STRING(value);
+                                result = (byte)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#elif PYTHON2
-                    if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
+                    else if (Runtime.IsPython2)
                     {
-                        if (Runtime.PyString_Size(value) == 1)
+                        if (Runtime.PyObject_TypeCheck(value, Runtime.PyStringType))
                         {
-                            op = Runtime.PyString_AS_STRING(value);
-                            result = (char)Marshal.ReadByte(op);
-                            return true;
+                            if (Runtime.PyString_Size(value) == 1)
+                            {
+                                op = Runtime.PyString_AS_STRING(value);
+                                result = (char)Marshal.ReadByte(op);
+                                return true;
+                            }
+                            goto type_error;
                         }
-                        goto type_error;
                     }
-#endif
                     else if (Runtime.PyObject_TypeCheck(value, Runtime.PyUnicodeType))
                     {
                         if (Runtime.PyUnicode_GetSize(value) == 1)

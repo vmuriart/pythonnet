@@ -9,3 +9,4 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDefaultAlias("Python.Runtime.dll")]
 
 [assembly: InternalsVisibleTo("Python.EmbeddingTest")]
+[assembly: InternalsVisibleTo("Python.Runtime.Interop")]

@@ -13,69 +13,20 @@ namespace Python.Runtime
     [SuppressUnmanagedCodeSecurity()]
     static partial class NativeMethods
     {
-#if MONO_LINUX || MONO_OSX
-        private static int RTLD_NOW = 0x2;
-        private static int RTLD_SHARED = 0x20;
-#if MONO_OSX
-        private static IntPtr RTLD_DEFAULT = new IntPtr(-2);
-        private const string NativeDll = "__Internal";
-#elif MONO_LINUX
-        private static IntPtr RTLD_DEFAULT = IntPtr.Zero;
-        private const string NativeDll = "libdl.so";
-#endif
-
-        public static IntPtr LoadLibrary(string fileName)
+        public static IntPtr LoadLibrary(string dllToLoad)
         {
-            return dlopen(fileName, RTLD_NOW | RTLD_SHARED);
+            return _interop.LoadLibrary(dllToLoad);
         }
 
-        public static void FreeLibrary(IntPtr handle)
+        public static bool FreeLibrary(IntPtr hModule)
         {
-            dlclose(handle);
+            return _interop.FreeLibrary(hModule);
         }
 
-        public static IntPtr GetProcAddress(IntPtr dllHandle, string name)
+        public static IntPtr GetProcAddress(IntPtr hModule, string procedureName)
         {
-            // look in the exe if dllHandle is NULL
-            if (dllHandle == IntPtr.Zero)
-            {
-                dllHandle = RTLD_DEFAULT;
-            }
-
-            // clear previous errors if any
-            dlerror();
-            IntPtr res = dlsym(dllHandle, name);
-            IntPtr errPtr = dlerror();
-            if (errPtr != IntPtr.Zero)
-            {
-                throw new Exception("dlsym: " + Marshal.PtrToStringAnsi(errPtr));
-            }
-            return res;
+            return _interop.GetProcAddress(hModule, procedureName);
         }
-
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlopen(String fileName, int flags);
-
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlsym(IntPtr handle, String symbol);
-
-        [DllImport(NativeDll)]
-        private static extern int dlclose(IntPtr handle);
-
-        [DllImport(NativeDll)]
-        private static extern IntPtr dlerror();
-#else // Windows
-        private const string NativeDll = "kernel32.dll";
-
-        [DllImport(NativeDll)]
-        public static extern IntPtr LoadLibrary(string dllToLoad);
-
-        [DllImport(NativeDll)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-        [DllImport(NativeDll)]
-        public static extern bool FreeLibrary(IntPtr hModule);
-#endif
     }
 
     /// <summary>

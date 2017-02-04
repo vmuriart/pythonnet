@@ -8,5 +8,6 @@ namespace Python.Runtime.InteropContracts
     /// </summary>
     public interface IPythonInterop
     {
+        IPythonNativeMethodsInterop NativeMethods { get; }
     }
 }

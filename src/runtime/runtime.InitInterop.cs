@@ -34,6 +34,25 @@ namespace Python.Runtime
         internal static void InitInterop(IPythonInterop pythonInterop)
         {
             NativeMethods.InitInterop(pythonInterop.NativeMethods);
+            _interop = pythonInterop.Runtime;
+            pythonInterop.InitTypeOffset();
+            pythonInterop.InitExceptionOffset();
+
+            UCS = pythonInterop.Runtime.UCS;
+            pyversion = pythonInterop.Runtime.PyVersion;
+            pyversionnumber = pythonInterop.Runtime.PyVersionNumber;
+            IsPython3 = pyversionnumber >= 30;
+            IsPython2 = pyversionnumber < 30;
+            IsWindows = true;
+            IsOSX = false;
+            IsLinux = false;
+            IsPosix = IsLinux || IsOSX;
+            IsPyDebug = pythonInterop.IsPyDebug;
+            dll = pythonInterop.Runtime.PythonDll;
+
+            TypeFlags.Init();
+            Interop.Init();
+            ObjectOffset.Init();
         }
     }
 }

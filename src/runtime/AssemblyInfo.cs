@@ -13,3 +13,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("2.0.0.2")]
 [assembly: NeutralResourcesLanguage("en")]
 [assembly: InternalsVisibleTo("Python.EmbeddingTest")]
+[assembly: InternalsVisibleTo("Python.Runtime.Interop")]

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using Python.Runtime.InteropContracts;
 
 #if UCS4
 using Mono.Unix;
@@ -10,7 +11,7 @@ using Mono.Unix;
 namespace Python.Runtime
 {
     [SuppressUnmanagedCodeSecurity()]
-    static class NativeMethods
+    static partial class NativeMethods
     {
 #if MONO_LINUX || MONO_OSX
         private static int RTLD_NOW = 0x2;
@@ -82,7 +83,7 @@ namespace Python.Runtime
     /// the responsibility of the caller to have acquired the GIL
     /// before calling any of these methods.
     /// </summary>
-    public class Runtime
+    public partial class Runtime
     {
 #if UCS4
         public const int UCS = 4;

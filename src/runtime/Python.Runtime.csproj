@@ -134,8 +134,13 @@
     <Compile Include="pythonexception.cs" />
     <Compile Include="pytuple.cs" />
     <Compile Include="runtime.cs" />
+    <Compile Include="runtime.InitInterop.cs" />
     <Compile Include="typemanager.cs" />
     <Compile Include="typemethod.cs" />
+    <Compile Include="typeoffset.cs" />
+    <Compile Include="InteropContracts\IPythonInterop.cs" />
+    <Compile Include="InteropContracts\IPythonNativeMethodsInterop.cs" />
+    <Compile Include="InteropContracts\IPythonRuntimeInterop.cs" />
   </ItemGroup>
   <ItemGroup Condition=" '$(PythonInteropFile)' != '' ">
     <Compile Include="$(PythonInteropFile)" />

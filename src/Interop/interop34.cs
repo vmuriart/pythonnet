@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace Python.Runtime
+namespace Python.Runtime.Interop
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class TypeOffset

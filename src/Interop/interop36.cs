@@ -2,7 +2,7 @@
 // DO NOT MODIFIY BY HAND.
 
 
-#if PYTHON33
+#if PYTHON36
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace Python.Runtime
+namespace Python.Runtime.Interop
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class TypeOffset
@@ -42,7 +42,7 @@ namespace Python.Runtime
         public static int tp_print = 0;
         public static int tp_getattr = 0;
         public static int tp_setattr = 0;
-        public static int tp_reserved = 0;
+        public static int tp_as_async = 0;
         public static int tp_repr = 0;
         public static int tp_as_number = 0;
         public static int tp_as_sequence = 0;
@@ -81,6 +81,10 @@ namespace Python.Runtime
         public static int tp_weaklist = 0;
         public static int tp_del = 0;
         public static int tp_version_tag = 0;
+        public static int tp_finalize = 0;
+        public static int am_await = 0;
+        public static int am_aiter = 0;
+        public static int am_anext = 0;
         public static int nb_add = 0;
         public static int nb_subtract = 0;
         public static int nb_multiply = 0;
@@ -115,6 +119,8 @@ namespace Python.Runtime
         public static int nb_inplace_floor_divide = 0;
         public static int nb_inplace_true_divide = 0;
         public static int nb_index = 0;
+        public static int nb_matrix_multiply = 0;
+        public static int nb_inplace_matrix_multiply = 0;
         public static int mp_length = 0;
         public static int mp_subscript = 0;
         public static int mp_ass_subscript = 0;

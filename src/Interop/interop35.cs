@@ -2,7 +2,7 @@
 // DO NOT MODIFIY BY HAND.
 
 
-#if PYTHON36
+#if PYTHON35
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace Python.Runtime
+namespace Python.Runtime.Interop
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class TypeOffset

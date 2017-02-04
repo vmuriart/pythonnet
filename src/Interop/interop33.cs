@@ -2,7 +2,7 @@
 // DO NOT MODIFIY BY HAND.
 
 
-#if PYTHON27
+#if PYTHON33
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace Python.Runtime
+namespace Python.Runtime.Interop
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     internal class TypeOffset
@@ -42,7 +42,7 @@ namespace Python.Runtime
         public static int tp_print = 0;
         public static int tp_getattr = 0;
         public static int tp_setattr = 0;
-        public static int tp_compare = 0;
+        public static int tp_reserved = 0;
         public static int tp_repr = 0;
         public static int tp_as_number = 0;
         public static int tp_as_sequence = 0;
@@ -84,30 +84,25 @@ namespace Python.Runtime
         public static int nb_add = 0;
         public static int nb_subtract = 0;
         public static int nb_multiply = 0;
-        public static int nb_divide = 0;
         public static int nb_remainder = 0;
         public static int nb_divmod = 0;
         public static int nb_power = 0;
         public static int nb_negative = 0;
         public static int nb_positive = 0;
         public static int nb_absolute = 0;
-        public static int nb_nonzero = 0;
+        public static int nb_bool = 0;
         public static int nb_invert = 0;
         public static int nb_lshift = 0;
         public static int nb_rshift = 0;
         public static int nb_and = 0;
         public static int nb_xor = 0;
         public static int nb_or = 0;
-        public static int nb_coerce = 0;
         public static int nb_int = 0;
-        public static int nb_long = 0;
+        public static int nb_reserved = 0;
         public static int nb_float = 0;
-        public static int nb_oct = 0;
-        public static int nb_hex = 0;
         public static int nb_inplace_add = 0;
         public static int nb_inplace_subtract = 0;
         public static int nb_inplace_multiply = 0;
-        public static int nb_inplace_divide = 0;
         public static int nb_inplace_remainder = 0;
         public static int nb_inplace_power = 0;
         public static int nb_inplace_lshift = 0;
@@ -127,20 +122,18 @@ namespace Python.Runtime
         public static int sq_concat = 0;
         public static int sq_repeat = 0;
         public static int sq_item = 0;
-        public static int sq_slice = 0;
+        public static int was_sq_slice = 0;
         public static int sq_ass_item = 0;
-        public static int sq_ass_slice = 0;
+        public static int was_sq_ass_slice = 0;
         public static int sq_contains = 0;
         public static int sq_inplace_concat = 0;
         public static int sq_inplace_repeat = 0;
-        public static int bf_getreadbuffer = 0;
-        public static int bf_getwritebuffer = 0;
-        public static int bf_getsegcount = 0;
-        public static int bf_getcharbuffer = 0;
         public static int bf_getbuffer = 0;
         public static int bf_releasebuffer = 0;
         public static int name = 0;
         public static int ht_slots = 0;
+        public static int qualname = 0;
+        public static int ht_cached_keys = 0;
 
         /* here are optional user slots, followed by the members. */
         public static int members = 0;

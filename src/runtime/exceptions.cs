@@ -90,7 +90,17 @@ namespace Python.Runtime
             Type type = typeof(Exceptions);
             foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | BindingFlags.Static))
             {
-                IntPtr op = Runtime.PyObject_GetAttrString(exceptions_module, fi.Name);
+                if (Runtime.pyversionnumber < 25
+                    && (fi.Name == "BaseException" || fi.Name == "GeneratorExit"))
+                {
+                    continue;
+                }
+                if (Runtime.pyversionnumber >= 32 && fi.Name == "StandardError")
+                {
+                    continue;
+                }
+
+                var op = Runtime.PyObject_GetAttrString(exceptions_module, fi.Name);
                 if (op != IntPtr.Zero)
                 {
                     fi.SetValue(type, op);

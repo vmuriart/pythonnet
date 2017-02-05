@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Security;
 using System.Text;
 using Python.Runtime.InteropContracts;
@@ -11,8 +12,15 @@ using Mono.Unix;
 namespace Python.Runtime
 {
     [SuppressUnmanagedCodeSecurity()]
-    static partial class NativeMethods
+    static class NativeMethods
     {
+        private static IPythonNativeMethodsInterop _interop;
+
+        internal static void InitInterop(IPythonNativeMethodsInterop interop)
+        {
+            _interop = interop;
+        }
+
         public static IntPtr LoadLibrary(string dllToLoad)
         {
             return _interop.LoadLibrary(dllToLoad);
@@ -34,7 +42,7 @@ namespace Python.Runtime
     /// the responsibility of the caller to have acquired the GIL
     /// before calling any of these methods.
     /// </summary>
-    public partial class Runtime
+    public class Runtime
     {
         private static IPythonRuntimeInterop _interop;
 
@@ -58,6 +66,44 @@ namespace Python.Runtime
         internal static bool Is32Bit;
         internal static bool IsPython2;
         internal static bool IsPython3;
+
+        static Runtime()
+        {
+            InitInterop();
+        }
+
+        public static void InitInterop()
+        {
+            Assembly assembly = Assembly.Load(new AssemblyName("Python.Runtime.Interop"));
+            Type type = assembly.GetType("Python.Runtime.Interop.PythonInterop");
+
+            var pythonInterop = (IPythonInterop)Activator.CreateInstance(type);
+            InitInterop(pythonInterop);
+        }
+
+        internal static void InitInterop(IPythonInterop pythonInterop)
+        {
+            NativeMethods.InitInterop(pythonInterop.NativeMethods);
+            _interop = pythonInterop.Runtime;
+            pythonInterop.InitTypeOffset();
+            pythonInterop.InitExceptionOffset();
+
+            UCS = pythonInterop.Runtime.UCS;
+            pyversion = pythonInterop.Runtime.PyVersion;
+            pyversionnumber = pythonInterop.Runtime.PyVersionNumber;
+            IsPython3 = pyversionnumber >= 30;
+            IsPython2 = pyversionnumber < 30;
+            IsWindows = true;
+            IsOSX = false;
+            IsLinux = false;
+            IsPosix = IsLinux || IsOSX;
+            IsPyDebug = pythonInterop.IsPyDebug;
+            dll = pythonInterop.Runtime.PythonDll;
+
+            TypeFlags.Init();
+            Interop.Init();
+            ObjectOffset.Init();
+        }
 
         /// <summary>
         /// Initialize the runtime...

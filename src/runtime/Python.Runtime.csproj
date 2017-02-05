@@ -134,7 +134,6 @@
     <Compile Include="pythonexception.cs" />
     <Compile Include="pytuple.cs" />
     <Compile Include="runtime.cs" />
-    <Compile Include="runtime.InitInterop.cs" />
     <Compile Include="typemanager.cs" />
     <Compile Include="typemethod.cs" />
     <Compile Include="typeoffset.cs" />

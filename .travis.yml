@@ -40,7 +40,7 @@ install:
 
 script:
   - python -m pytest
-  - mono ./packages/NUnit.*/tools/nunit3-console.exe src/embed_tests/bin/Python.EmbeddingTest.dll
+  - mono ./packages/xunit.*/tools/xunit.console.exe src/embed_tests/bin/Python.EmbeddingTest.dll
 
 after_script:
   # Uncomment if need to geninterop, ie. py37 final

@@ -1,17 +1,17 @@
 # Script to simplify AppVeyor configuration and resolve path to tools
 
 # Test Runner framework being used for embedded tests
-$CS_RUNNER = "nunit3-console"
+$CS_RUNNER = "xunit.console"
 
 # Needed for ARCH specific runners(NUnit2/XUnit3). Skip for NUnit3
-if ($FALSE -and $env:PLATFORM -eq "x86"){
-    $CS_RUNNER = $CS_RUNNER + "-x86"
+if ($env:PLATFORM -eq "x86"){
+    $CS_RUNNER = $CS_RUNNER + ".x86"
 }
 
 # Executable paths for OpenCover
 # Note if OpenCover fails, it won't affect the exit codes.
 $OPENCOVER = Resolve-Path .\packages\OpenCover.*\tools\OpenCover.Console.exe
-$CS_RUNNER = Resolve-Path .\packages\NUnit.*\tools\"$CS_RUNNER".exe
+$CS_RUNNER = Resolve-Path .\packages\xunit.*\tools\"$CS_RUNNER".exe
 $PY = Get-Command python
 
 # Can't use ".\build\*\Python.EmbeddingTest.dll". Missing framework files.
@@ -36,6 +36,7 @@ Write-Host ("Starting embedded tests") -ForegroundColor "Green"
             -returntargetcode
 $CS_STATUS = $LastExitCode
 if ($CS_STATUS -ne 0) {
+    # Error msg: Fatal Python error: PyImport_GetModuleDict: no module dictionary!
     Write-Host "Embedded tests failed" -ForegroundColor "Red"
 }
 

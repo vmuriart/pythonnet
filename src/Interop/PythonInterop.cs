@@ -12,5 +12,31 @@ namespace Python.Runtime.Interop
         {
             get { return _nativeMethods; }
         }
+
+        public string TargetPlatform
+        {
+            get
+            {
+#if MONO_LINUX
+                return "Linux";
+#elif MONO_OSX
+                return "OSX";
+#else
+                return "Windows";
+#endif
+            }
+        }
+
+        public bool IsPyDebug
+        {
+            get
+            {
+#if PYTHON_WITH_PYDEBUG
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
     }
 }

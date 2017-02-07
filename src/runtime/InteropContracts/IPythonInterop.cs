@@ -9,5 +9,9 @@ namespace Python.Runtime.InteropContracts
     public interface IPythonInterop
     {
         IPythonNativeMethodsInterop NativeMethods { get; }
+
+        string TargetPlatform { get; }
+
+        bool IsPyDebug { get; }
     }
 }

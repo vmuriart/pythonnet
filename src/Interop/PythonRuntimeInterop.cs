@@ -2452,7 +2452,11 @@ namespace Python.Runtime.Interop
 
         IntPtr IPythonRuntimeInterop.PyUnicode_FromKindAndString(int kind, string s, int size)
         {
+#if PYTHON3
             return PyUnicode_FromKindAndString(kind, s, size);
+#elif PYTHON2
+            throw new NotSupportedException();
+#endif
         }
 
         IntPtr IPythonRuntimeInterop.PyUnicode_FromUnicode(string s, int size)
@@ -2691,7 +2695,11 @@ namespace Python.Runtime.Interop
 
         IntPtr IPythonRuntimeInterop.PyModule_Create2(IntPtr module, int apiver)
         {
+#if PYTHON3
             return PyModule_Create2(module, apiver);
+#elif PYTHON2
+            throw new NotSupportedException();
+#endif
         }
 
         IntPtr IPythonRuntimeInterop.PyImport_Import(IntPtr name)

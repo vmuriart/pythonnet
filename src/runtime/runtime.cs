@@ -41,87 +41,14 @@ namespace Python.Runtime
     /// </summary>
     public class Runtime
     {
-#if UCS4
-        public const int UCS = 4;
-#elif UCS2
-        public const int UCS = 2;
-#else
-#error You must define either UCS2 or UCS4!
-#endif
+        private static IPythonRuntimeInterop _interop;
 
-#if PYTHON27
-        public const string pyversion = "2.7";
-        public const int pyversionnumber = 27;
-#elif PYTHON33
-        public const string pyversion = "3.3";
-        public const int pyversionnumber = 33;
-#elif PYTHON34
-        public const string pyversion = "3.4";
-        public const int pyversionnumber = 34;
-#elif PYTHON35
-        public const string pyversion = "3.5";
-        public const int pyversionnumber = 35;
-#elif PYTHON36
-        public const string pyversion = "3.6";
-        public const int pyversionnumber = 36;
-#elif PYTHON37 // TODO: Add interop37 after Python3.7 is released
-        public const string pyversion = "3.7";
-        public const int pyversionnumber = 37;
-#else
-#error You must define one of PYTHON33 to PYTHON37 or PYTHON27
-#endif
+        public static int UCS;
 
-#if MONO_LINUX || MONO_OSX
-#if PYTHON27
-        internal const string dllBase = "python27";
-#elif PYTHON33
-        internal const string dllBase = "python3.3";
-#elif PYTHON34
-        internal const string dllBase = "python3.4";
-#elif PYTHON35
-        internal const string dllBase = "python3.5";
-#elif PYTHON36
-        internal const string dllBase = "python3.6";
-#elif PYTHON37
-        internal const string dllBase = "python3.7";
-#endif
-#else // Windows
-#if PYTHON27
-        internal const string dllBase = "python27";
-#elif PYTHON33
-        internal const string dllBase = "python33";
-#elif PYTHON34
-        internal const string dllBase = "python34";
-#elif PYTHON35
-        internal const string dllBase = "python35";
-#elif PYTHON36
-        internal const string dllBase = "python36";
-#elif PYTHON37
-        internal const string dllBase = "python37";
-#endif
-#endif
+        public static string pyversion;
+        public static int pyversionnumber;
 
-#if PYTHON_WITH_PYDEBUG
-        internal const string dllWithPyDebug = "d";
-#else
-        internal const string dllWithPyDebug = "";
-#endif
-#if PYTHON_WITH_PYMALLOC
-        internal const string dllWithPyMalloc = "m";
-#else
-        internal const string dllWithPyMalloc = "";
-#endif
-#if PYTHON_WITH_WIDE_UNICODE
-        internal const string dllWithWideUnicode = "u";
-#else
-        internal const string dllWithWideUnicode = "";
-#endif
-
-#if PYTHON_WITHOUT_ENABLE_SHARED
-        public const string dll = "__Internal";
-#else
-        public const string dll = dllBase + dllWithPyDebug + dllWithPyMalloc + dllWithWideUnicode;
-#endif
+        public static string dll;
 
         // set to true when python is finalizing
         internal static Object IsFinalizingLock = new Object();
@@ -130,6 +57,14 @@ namespace Python.Runtime
         internal static bool Is32Bit;
         internal static bool IsPython2;
         internal static bool IsPython3;
+
+        public static bool IsPyDebug;
+
+        public static string TargetPlatform;
+        public static bool IsWindows;
+        public static bool IsLinux;
+        public static bool IsOSX;
+        public static bool IsPosix;
 
         public static void InitInterop()
         {
@@ -157,6 +92,19 @@ namespace Python.Runtime
         internal static void InitInterop(IPythonInterop pythonInterop)
         {
             NativeMethods.InitInterop(pythonInterop.NativeMethods);
+            _interop = pythonInterop.Runtime;
+
+            UCS = pythonInterop.Runtime.UCS;
+            pyversion = pythonInterop.Runtime.PyVersion;
+            pyversionnumber = pythonInterop.Runtime.PyVersionNumber;
+            dll = pythonInterop.Runtime.PythonDll;
+            IsPyDebug = pythonInterop.IsPyDebug;
+            TargetPlatform = pythonInterop.TargetPlatform;
+
+            IsWindows = TargetPlatform == "Windows";
+            IsLinux = TargetPlatform == "Linux";
+            IsOSX = TargetPlatform == "OSX";
+            IsPosix = IsLinux || IsOSX;
         }
 
         /// <summary>
@@ -215,9 +163,11 @@ namespace Python.Runtime
             PyWrapperDescriptorType = Runtime.PyObject_Type(op);
             Runtime.XDecref(op);
 
-#if PYTHON3
-            Runtime.XDecref(dict);
-#endif
+            // Why does only Python3 Decref dict?
+            if (IsPython3)
+            {
+                Runtime.XDecref(dict);
+            }
 
             op = Runtime.PyString_FromString("string");
             PyStringType = Runtime.PyObject_Type(op);
@@ -227,11 +177,12 @@ namespace Python.Runtime
             PyUnicodeType = Runtime.PyObject_Type(op);
             Runtime.XDecref(op);
 
-#if PYTHON3
-            op = Runtime.PyBytes_FromString("bytes");
-            PyBytesType = Runtime.PyObject_Type(op);
-            Runtime.XDecref(op);
-#endif
+            if (IsPython3)
+            {
+                op = Runtime.PyBytes_FromString("bytes");
+                PyBytesType = Runtime.PyObject_Type(op);
+                Runtime.XDecref(op);
+            }
 
             op = Runtime.PyTuple_New(0);
             PyTupleType = Runtime.PyObject_Type(op);
@@ -257,41 +208,47 @@ namespace Python.Runtime
             PyFloatType = Runtime.PyObject_Type(op);
             Runtime.XDecref(op);
 
-#if PYTHON3
-            PyClassType = IntPtr.Zero;
-            PyInstanceType = IntPtr.Zero;
-#elif PYTHON2
-            IntPtr s = Runtime.PyString_FromString("_temp");
-            IntPtr d = Runtime.PyDict_New();
+            if (IsPython3)
+            {
+                PyClassType = IntPtr.Zero;
+                PyInstanceType = IntPtr.Zero;
+            }
+            else
+            {
+                IntPtr s = Runtime.PyString_FromString("_temp");
+                IntPtr d = Runtime.PyDict_New();
 
-            IntPtr c = Runtime.PyClass_New(IntPtr.Zero, d, s);
-            PyClassType = Runtime.PyObject_Type(c);
+                IntPtr c = Runtime.PyClass_New(IntPtr.Zero, d, s);
+                PyClassType = Runtime.PyObject_Type(c);
 
-            IntPtr i = Runtime.PyInstance_New(c, IntPtr.Zero, IntPtr.Zero);
-            PyInstanceType = Runtime.PyObject_Type(i);
+                IntPtr i = Runtime.PyInstance_New(c, IntPtr.Zero, IntPtr.Zero);
+                PyInstanceType = Runtime.PyObject_Type(i);
 
-            Runtime.XDecref(s);
-            Runtime.XDecref(i);
-            Runtime.XDecref(c);
-            Runtime.XDecref(d);
-#endif
+                Runtime.XDecref(s);
+                Runtime.XDecref(i);
+                Runtime.XDecref(c);
+                Runtime.XDecref(d);
+            }
 
             Error = new IntPtr(-1);
 
-#if PYTHON3
-            IntPtr dllLocal = IntPtr.Zero;
-            if (Runtime.dll != "__Internal")
+            if (IsPython3)
             {
-                NativeMethods.LoadLibrary(Runtime.dll);
+                IntPtr dllLocal = IntPtr.Zero;
+                if (Runtime.dll != "__Internal")
+                {
+                    NativeMethods.LoadLibrary(Runtime.dll);
+                }
+                _PyObject_NextNotImplemented = NativeMethods.GetProcAddress(dllLocal, "_PyObject_NextNotImplemented");
+
+                if (!IsPosix)
+                {
+                    if (dllLocal != IntPtr.Zero)
+                    {
+                        NativeMethods.FreeLibrary(dllLocal);
+                    }
+                }
             }
-            _PyObject_NextNotImplemented = NativeMethods.GetProcAddress(dllLocal, "_PyObject_NextNotImplemented");
-#if !(MONO_LINUX || MONO_OSX)
-            if (dllLocal != IntPtr.Zero)
-            {
-                NativeMethods.FreeLibrary(dllLocal);
-            }
-#endif
-#endif
 
             // Initialize modules that depend on the runtime class.
             AssemblyManager.Initialize();
@@ -351,10 +308,8 @@ namespace Python.Runtime
         internal static IntPtr PyNoneType;
         internal static IntPtr PyTypeType;
 
-#if PYTHON3
-        internal static IntPtr PyBytesType;
-        internal static IntPtr _PyObject_NextNotImplemented;
-#endif
+        internal static IntPtr PyBytesType; // Python3 Only
+        internal static IntPtr _PyObject_NextNotImplemented; // Python3 Only
 
         internal static IntPtr PyNotImplemented;
         internal const int Py_LT = 0;
@@ -488,64 +443,70 @@ namespace Python.Runtime
         /// </summary>
         internal unsafe static void XIncref(IntPtr op)
         {
-#if Py_DEBUG
-            // according to Python doc, Py_IncRef() is Py_XINCREF()
-            Py_IncRef(op);
-            return;
-#else
-            void* p = (void*)op;
-            if ((void*)0 != p)
+            if (IsPyDebug)
             {
-                if (Is32Bit)
+                // according to Python doc, Py_IncRef() is Py_XINCREF()
+                Py_IncRef(op);
+                return;
+            }
+            else
+            {
+                void* p = (void*)op;
+                if ((void*)0 != p)
                 {
-                    (*(int*)p)++;
-                }
-                else
-                {
-                    (*(long*)p)++;
+                    if (Is32Bit)
+                    {
+                        (*(int*)p)++;
+                    }
+                    else
+                    {
+                        (*(long*)p)++;
+                    }
                 }
             }
-#endif
         }
 
         internal static unsafe void XDecref(IntPtr op)
         {
-#if Py_DEBUG
-            // Py_DecRef calls Python's Py_DECREF
-            // according to Python doc, Py_DecRef() is Py_XDECREF()
-            Py_DecRef(op);
-            return;
-#else
-            void* p = (void*)op;
-            if ((void*)0 != p)
+            if (IsPyDebug)
             {
-                if (Is32Bit)
+                // Py_DecRef calls Python's Py_DECREF
+                // according to Python doc, Py_DecRef() is Py_XDECREF()
+                Py_DecRef(op);
+                return;
+            }
+            else
+            {
+                void* p = (void*)op;
+                if ((void*)0 != p)
                 {
-                    --(*(int*)p);
-                }
-                else
-                {
-                    --(*(long*)p);
-                }
-                if ((*(int*)p) == 0)
-                {
-                    // PyObject_HEAD: struct _typeobject *ob_type
-                    void* t = Is32Bit
-                        ? (void*)(*((uint*)p + 1))
-                        : (void*)(*((ulong*)p + 1));
-                    // PyTypeObject: destructor tp_dealloc
-                    void* f = Is32Bit
-                        ? (void*)(*((uint*)t + 6))
-                        : (void*)(*((ulong*)t + 6));
-                    if ((void*)0 == f)
+                    if (Is32Bit)
                     {
+                        --(*(int*)p);
+                    }
+                    else
+                    {
+                        --(*(long*)p);
+                    }
+                    if ((*(int*)p) == 0)
+                    {
+                        // PyObject_HEAD: struct _typeobject *ob_type
+                        void* t = Is32Bit
+                            ? (void*)(*((uint*)p + 1))
+                            : (void*)(*((ulong*)p + 1));
+                        // PyTypeObject: destructor tp_dealloc
+                        void* f = Is32Bit
+                            ? (void*)(*((uint*)t + 6))
+                            : (void*)(*((ulong*)t + 6));
+                        if ((void*)0 == f)
+                        {
+                            return;
+                        }
+                        NativeCall.Impl.Void_Call_1(new IntPtr(f), op);
                         return;
                     }
-                    NativeCall.Impl.Void_Call_1(new IntPtr(f), op);
-                    return;
                 }
             }
-#endif
         }
 
         internal unsafe static long Refcount(IntPtr op)
@@ -655,10 +616,7 @@ namespace Python.Runtime
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
         public unsafe static extern int
-            Py_Main(
-                int argc,
-                [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] argv
-            );
+            Py_Main(int argc, [MarshalAsAttribute(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] argv);
 #elif PYTHON2
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -732,7 +690,7 @@ namespace Python.Runtime
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
         internal unsafe static extern void
-            Py_SetProgramName([MarshalAs(UnmanagedType.LPWStr)] string name);
+            Py_SetProgramName([MarshalAsAttribute(UnmanagedType.LPWStr)] string name);
 
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -743,7 +701,7 @@ namespace Python.Runtime
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
         internal unsafe static extern void
-            Py_SetPythonHome([MarshalAs(UnmanagedType.LPWStr)] string home);
+            Py_SetPythonHome([MarshalAsAttribute(UnmanagedType.LPWStr)] string home);
 
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -754,7 +712,7 @@ namespace Python.Runtime
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
         internal unsafe static extern void
-            Py_SetPath([MarshalAs(UnmanagedType.LPWStr)] string home);
+            Py_SetPath([MarshalAsAttribute(UnmanagedType.LPWStr)] string home);
 #elif PYTHON2
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -2077,7 +2035,7 @@ namespace Python.Runtime
         internal unsafe static extern void
             PySys_SetArgvEx(
                 int argc,
-                [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] argv,
+                [MarshalAsAttribute(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)] string[] argv,
                 int updatepath
             );
 #elif PYTHON2

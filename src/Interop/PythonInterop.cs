@@ -7,10 +7,16 @@ namespace Python.Runtime.Interop
     public class PythonInterop : IPythonInterop
     {
         private readonly IPythonNativeMethodsInterop _nativeMethods = new PythonNativeMethodsInterop();
+        private readonly IPythonRuntimeInterop _runtime = new PythonRuntimeInterop();
 
         public IPythonNativeMethodsInterop NativeMethods
         {
             get { return _nativeMethods; }
+        }
+
+        public IPythonRuntimeInterop Runtime
+        {
+            get { return _runtime; }
         }
 
         public string TargetPlatform

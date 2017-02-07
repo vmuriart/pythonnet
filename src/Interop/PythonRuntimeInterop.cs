@@ -1194,14 +1194,14 @@ namespace Python.Runtime.Interop
             if (type == Runtime.PyUnicodeType)
             {
 #if UCS4
-                IntPtr p = Runtime.PyUnicode_AsUnicode(op);
+                IntPtr p = PyUnicode_AsUnicode(op);
                 int length = Runtime.PyUnicode_GetSize(op);
                 int size = length * 4;
                 byte[] buffer = new byte[size];
                 Marshal.Copy(p, buffer, 0, size);
                 return Encoding.UTF32.GetString(buffer, 0, size);
 #elif UCS2
-                char* p = Runtime.PyUnicode_AsUnicode(op);
+                char* p = PyUnicode_AsUnicode(op);
                 int size = Runtime.PyUnicode_GetSize(op);
                 return new String(p, 0, size);
 #endif

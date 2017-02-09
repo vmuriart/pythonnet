@@ -1,5 +1,5 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
@@ -11,41 +11,41 @@ namespace Python.EmbeddingTest
     /// Keeping this in the old-style SetUp/TearDown
     /// to ensure that setup still works.
     /// </remarks>
-    public class PythonExceptionTest
+    public class PythonExceptionTest : IDisposable
     {
         private IntPtr gs;
 
-        [SetUp]
-        public void SetUp()
+        public PythonExceptionTest()
         {
             PythonEngine.Initialize();
             gs = PythonEngine.AcquireLock();
         }
 
-        [TearDown]
         public void Dispose()
         {
             PythonEngine.ReleaseLock(gs);
             PythonEngine.Shutdown();
         }
 
-        [Test]
+        [Fact]
         public void TestMessage()
         {
             var list = new PyList();
-            PyObject foo = null;
-
-            var ex = Assert.Throws<PythonException>(() => foo = list[0]);
-
-            Assert.AreEqual("IndexError : list index out of range", ex.Message);
-            Assert.IsNull(foo);
+            try
+            {
+                PyObject junk = list[0];
+            }
+            catch (PythonException e)
+            {
+                Assert.Equal("IndexError : list index out of range", e.Message);
+            }
         }
 
-        [Test]
+        [Fact]
         public void TestNoError()
         {
             var e = new PythonException(); // There is no PyErr to fetch
-            Assert.AreEqual("", e.Message);
+            Assert.Equal("", e.Message);
         }
     }
 }

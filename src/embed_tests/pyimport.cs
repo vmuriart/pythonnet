@@ -1,6 +1,7 @@
 using System;
 using System.IO;
-using NUnit.Framework;
+using System.Reflection;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
@@ -17,12 +18,11 @@ namespace Python.EmbeddingTest
     /// | | - __init__.py
     /// | | - one.py
     /// </remarks>
-    public class PyImportTest
+    public class PyImportTest : IDisposable
     {
         private IntPtr gs;
 
-        [SetUp]
-        public void SetUp()
+        public PyImportTest()
         {
             PythonEngine.Initialize();
             gs = PythonEngine.AcquireLock();
@@ -31,14 +31,13 @@ namespace Python.EmbeddingTest
              * using reflection to circumvent the private
              * modifiers placed on most Runtime methods. */
             const string s = "../fixtures";
-            string testPath = Path.Combine(TestContext.CurrentContext.TestDirectory, s);
+            string testPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), s);
 
             IntPtr str = Runtime.Runtime.PyString_FromString(testPath);
             IntPtr path = Runtime.Runtime.PySys_GetObject("path");
             Runtime.Runtime.PyList_Append(path, str);
         }
 
-        [TearDown]
         public void Dispose()
         {
             PythonEngine.ReleaseLock(gs);
@@ -48,21 +47,21 @@ namespace Python.EmbeddingTest
         /// <summary>
         /// Test subdirectory import
         /// </summary>
-        [Test]
+        [Fact]
         public void TestDottedName()
         {
             PyObject module = PythonEngine.ImportModule("PyImportTest.test.one");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
         }
 
         /// <summary>
         /// Tests that sys.args is set. If it wasn't exception would be raised.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestSysArgsImportException()
         {
             PyObject module = PythonEngine.ImportModule("PyImportTest.sysargv");
-            Assert.IsNotNull(module);
+            Assert.NotNull(module);
         }
     }
 }

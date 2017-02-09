@@ -1,5 +1,5 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
@@ -10,66 +10,47 @@ namespace Python.EmbeddingTest
         /// Test IsTupleType without having to Initialize a tuple.
         /// PyTuple constructor use IsTupleType. This decouples the tests.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestStringIsTupleType()
         {
             using (Py.GIL())
             {
                 var s = new PyString("foo");
-                Assert.IsFalse(PyTuple.IsTupleType(s));
+                Assert.False(PyTuple.IsTupleType(s));
             }
         }
 
         /// <summary>
         /// Test IsTupleType with Tuple.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestPyTupleIsTupleType()
         {
             using (Py.GIL())
             {
                 var t = new PyTuple();
-                Assert.IsTrue(PyTuple.IsTupleType(t));
+                Assert.True(PyTuple.IsTupleType(t));
             }
         }
 
-        [Test]
+        [Fact]
         public void TestPyTupleEmpty()
         {
             using (Py.GIL())
             {
                 var t = new PyTuple();
-                Assert.AreEqual(0, t.Length());
+                Assert.Equal(0, t.Length());
             }
         }
 
-        [Test]
-        public void TestPyTupleBadCtor()
-        {
-            using (Py.GIL())
-            {
-                var i = new PyInt(5);
-                PyTuple t = null;
-
-                var ex = Assert.Throws<ArgumentException>(() => t = new PyTuple(i));
-
-                Assert.AreEqual("object is not a tuple", ex.Message);
-                Assert.IsNull(t);
-            }
-        }
-
-        /// <summary>
-        /// Test PyTuple.Concat(...) doesn't let invalid appends happen
-        /// and throws and exception.
-        /// </summary>
         /// <remarks>
-        /// Test has second purpose. Currently it generated an Exception
-        /// that the GC failed to remove often and caused AppDomain unload
-        /// errors at the end of tests. See GH#397 for more info.
-        /// <para />
-        /// Curious, on PY27 it gets a Unicode on the ex.Message. On PY3+ its string.
+        /// FIXME: Unable to unload AppDomain, Unload thread timed out.
+        /// Seen on Travis/AppVeyor on both PY2 and PY3. Causes Embedded_Tests
+        /// to hang after they are finished for ~40 seconds until nunit3 forces
+        /// a timeout on unloading tests. Doesn't fail the tests though but
+        /// greatly slows down CI. nunit2 silently has this issue.
         /// </remarks>
-        [Test]
+        [Fact(Skip= "GH#397: Travis/AppVeyor: Unable to unload AppDomain, Unload thread timed out")]
         public void TestPyTupleInvalidAppend()
         {
             using (Py.GIL())
@@ -85,7 +66,7 @@ namespace Python.EmbeddingTest
             }
         }
 
-        [Test]
+        [Fact]
         public void TestPyTupleValidAppend()
         {
             using (Py.GIL())
@@ -93,47 +74,50 @@ namespace Python.EmbeddingTest
                 var t0 = new PyTuple();
                 var t = new PyTuple();
                 t.Concat(t0);
-                Assert.IsNotNull(t);
-                Assert.IsInstanceOf(typeof(PyTuple), t);
+                Assert.NotNull(t);
+                Assert.IsType(typeof(PyTuple), t);
             }
         }
 
-        [Test]
+        [Fact]
         public void TestPyTupleStringConvert()
         {
             using (Py.GIL())
             {
                 PyObject s = new PyString("foo");
                 PyTuple t = PyTuple.AsTuple(s);
-                Assert.IsNotNull(t);
-                Assert.IsInstanceOf(typeof(PyTuple), t);
-                Assert.AreEqual("f", t[0].ToString());
-                Assert.AreEqual("o", t[1].ToString());
-                Assert.AreEqual("o", t[2].ToString());
+                Assert.NotNull(t);
+                Assert.IsType(typeof(PyTuple), t);
+                Assert.Equal("f", t[0].ToString());
+                Assert.Equal("o", t[1].ToString());
+                Assert.Equal("o", t[2].ToString());
             }
         }
 
-        [Test]
+        [Fact]
         public void TestPyTupleValidConvert()
         {
             using (Py.GIL())
             {
                 var l = new PyList();
                 PyTuple t = PyTuple.AsTuple(l);
-                Assert.IsNotNull(t);
-                Assert.IsInstanceOf(typeof(PyTuple), t);
+                Assert.NotNull(t);
+                Assert.IsType(typeof(PyTuple), t);
             }
         }
 
-        [Test]
+        /// <remarks>
+        /// FIXME: Possible source of intermittent AppVeyor PY27: Unable to unload AppDomain.
+        /// </remarks>
+        [Fact]
         public void TestNewPyTupleFromPyTuple()
         {
             using (Py.GIL())
             {
                 var t0 = new PyTuple();
                 var t = new PyTuple(t0);
-                Assert.IsNotNull(t);
-                Assert.IsInstanceOf(typeof(PyTuple), t);
+                Assert.NotNull(t);
+                Assert.IsType(typeof(PyTuple), t);
             }
         }
 

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
 {
     public class PyIterTest
     {
-        [Test]
+        [Fact]
         public void TestOnPyList()
         {
             using (Py.GIL())
@@ -21,10 +21,10 @@ namespace Python.EmbeddingTest
                 {
                     result.Add(item.ToString());
                 }
-                Assert.AreEqual(3, result.Count);
-                Assert.AreEqual("foo", result[0]);
-                Assert.AreEqual("bar", result[1]);
-                Assert.AreEqual("baz", result[2]);
+                Assert.Equal(3, result.Count);
+                Assert.Equal("foo", result[0]);
+                Assert.Equal("bar", result[1]);
+                Assert.Equal("baz", result[2]);
             }
         }
     }

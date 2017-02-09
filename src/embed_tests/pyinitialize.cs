@@ -1,5 +1,5 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
@@ -10,7 +10,7 @@ namespace Python.EmbeddingTest
         /// Tests issue with multiple simple Initialize/Shutdowns.
         /// Fixed by #343
         /// </summary>
-        [Test]
+        [Fact]
         public static void StartAndStopTwice()
         {
             PythonEngine.Initialize();
@@ -20,25 +20,25 @@ namespace Python.EmbeddingTest
             PythonEngine.Shutdown();
         }
 
-        [Test]
+        [Fact]
         public static void LoadDefaultArgs()
         {
             using (new PythonEngine())
             using (var argv = new PyList(Runtime.Runtime.PySys_GetObject("argv")))
             {
-                Assert.AreNotEqual(0, argv.Length());
+                Assert.NotEqual(0, argv.Length());
             }
         }
 
-        [Test]
+        [Fact]
         public static void LoadSpecificArgs()
         {
             var args = new[] { "test1", "test2" };
             using (new PythonEngine(args))
             using (var argv = new PyList(Runtime.Runtime.PySys_GetObject("argv")))
             {
-                Assert.AreEqual(args[0], argv[0].ToString());
-                Assert.AreEqual(args[1], argv[1].ToString());
+                Assert.Equal(args[0], argv[0].ToString());
+                Assert.Equal(args[1], argv[1].ToString());
             }
         }
 
@@ -47,9 +47,8 @@ namespace Python.EmbeddingTest
         /// and ArgumentException issue after that one is fixed.
         /// More complex version of StartAndStopTwice test
         /// </summary>
-        [Test]
-        [Ignore("GH#376: System.OverflowException : Arithmetic operation resulted in an overflow")]
-        //[Ignore("System.ArgumentException : Cannot pass a GCHandle across AppDomains")]
+        [Fact(Skip = "GH#376: System.OverflowException : Arithmetic operation resulted in an overflow")]
+        //[Fact(Skip = "System.ArgumentException : Cannot pass a GCHandle across AppDomains")]
         public void ReInitialize()
         {
             var code = "from System import Int32\n";

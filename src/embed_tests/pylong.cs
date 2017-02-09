@@ -1,19 +1,19 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
 {
     public class PyLongTest
     {
-        [Test]
+        [Fact]
         public void TestToInt64()
         {
             using (Py.GIL())
             {
                 long largeNumber = 8L * 1024L * 1024L * 1024L; // 8 GB
                 var pyLargeNumber = new PyLong(largeNumber);
-                Assert.AreEqual(largeNumber, pyLargeNumber.ToInt64());
+                Assert.Equal(largeNumber, pyLargeNumber.ToInt64());
             }
         }
     }

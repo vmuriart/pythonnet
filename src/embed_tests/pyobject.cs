@@ -1,18 +1,18 @@
 using System;
-using NUnit.Framework;
+using Xunit;
 using Python.Runtime;
 
 namespace Python.EmbeddingTest
 {
     public class PyObjectTest
     {
-        [Test]
+        [Fact]
         public void TestUnicode()
         {
             using (Py.GIL())
             {
                 PyObject s = new PyString("foo\u00e9");
-                Assert.AreEqual("foo\u00e9", s.ToString());
+                Assert.Equal("foo\u00e9", s.ToString());
             }
         }
     }

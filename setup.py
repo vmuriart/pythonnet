@@ -7,7 +7,6 @@ an egg or wheel.
 """
 
 import collections
-import fnmatch
 import glob
 import os
 import subprocess
@@ -100,24 +99,6 @@ def _get_interop_filename():
     interop_filename = "interop{0}{1}{2}.cs".format(
         PY_MAJOR, PY_MINOR, getattr(sys, "abiflags", ""))
     return os.path.join("src", "runtime", interop_filename)
-
-
-def _get_source_files():
-    """Walk project and collect the files needed for ext_module"""
-    for ext in (".sln", ):
-        for path in glob.glob("*" + ext):
-            yield path
-
-    for root, dirnames, filenames in os.walk("src"):
-        for ext in (".cs", ".csproj", ".snk", ".config",
-                    ".py", ".c", ".h", ".ico"):
-            for filename in fnmatch.filter(filenames, "*" + ext):
-                yield os.path.join(root, filename)
-
-    for root, dirnames, filenames in os.walk("tools"):
-        for ext in (".exe", ".py", ".c", ".h"):
-            for filename in fnmatch.filter(filenames, "*" + ext):
-                yield os.path.join(root, filename)
 
 
 def _get_long_description():
@@ -376,7 +357,7 @@ setup(
     setup_requires=setup_requires,
     long_description=_get_long_description(),
     ext_modules=[
-        Extension("clr", sources=list(_get_source_files()))
+        Extension("clr", sources=['', ])
     ],
     data_files=[
         ("{install_platlib}", [

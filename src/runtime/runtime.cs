@@ -1495,18 +1495,12 @@ namespace Python.Runtime
             var bufLength = s.Length * 4;
             IntPtr mem = Marshal.AllocHGlobal(bufLength);
 
-            try
+            fixed (char* ps = s)
             {
-                fixed (char* ps = s)
-                {
-                    Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
-                }
-                return mem;
+                Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
             }
-            finally
-            {
-                Marshal.FreeHGlobal(mem);
-            }
+
+            return mem;
         }
 
 #if PYTHON3
@@ -1679,8 +1673,15 @@ namespace Python.Runtime
             int size)
         {
             IntPtr mem = StringToHeap(s);
-            var result = PyUnicode_FromKindAndString(kind, mem, size);
-            return result;
+            try
+            {
+                var result = PyUnicode_FromKindAndString(kind, mem, size);
+                return result;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(mem);
+            }
         }
 
         internal static IntPtr PyUnicode_FromUnicode(string s, int size)

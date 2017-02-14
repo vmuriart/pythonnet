@@ -1490,6 +1490,25 @@ namespace Python.Runtime
             return PyString_FromStringAndSize(value, value.Length);
         }
 
+        internal unsafe static IntPtr StringToHeap(string s)
+        {
+            var bufLength = s.Length * 4;
+            IntPtr mem = Marshal.AllocHGlobal(bufLength);
+
+            try
+            {
+                fixed (char* ps = s)
+                {
+                    Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
+                }
+                return mem;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(mem);
+            }
+        }
+
 #if PYTHON3
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,
             ExactSpelling = true, CharSet = CharSet.Ansi)]
@@ -1659,23 +1678,9 @@ namespace Python.Runtime
             string s,
             int size)
         {
-            var bufLength = Math.Max(s.Length, size) * 4;
-
-            IntPtr mem = Marshal.AllocHGlobal(bufLength);
-            try
-            {
-                fixed (char* ps = s)
-                {
-                    Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
-                }
-
-                var result = PyUnicode_FromKindAndString(kind, mem, size);
-                return result;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(mem);
-            }
+            IntPtr mem = StringToHeap(s);
+            var result = PyUnicode_FromKindAndString(kind, mem, size);
+            return result;
         }
 
         internal static IntPtr PyUnicode_FromUnicode(string s, int size)
@@ -1724,23 +1729,9 @@ namespace Python.Runtime
 
         internal static unsafe IntPtr PyUnicode_FromUnicode(string s, int size)
         {
-            var bufLength = Math.Max(s.Length, size) * 4;
-
-            IntPtr mem = Marshal.AllocHGlobal(bufLength);
-            try
-            {
-                fixed (char* ps = s)
-                {
-                    Encoding.UTF32.GetBytes(ps, s.Length, (byte*)mem, bufLength);
-                }
-
-                var result = PyUnicode_FromUnicode(mem, size);
-                return result;
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(mem);
-            }
+            IntPtr mem = StringToHeap(s);
+            var result = PyUnicode_FromUnicode(mem, size);
+            return result;
         }
 
         [DllImport(Runtime.dll, CallingConvention = CallingConvention.Cdecl,

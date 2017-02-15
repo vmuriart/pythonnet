@@ -53,7 +53,7 @@ after_success:
   # - python tools/geninterop/geninterop.py
 
   # Waiting on mono-cov support or SharpCover
-  - codecov
+  - ls
 
 notifications:
   email: false

@@ -64,7 +64,7 @@ test_script:
 
 on_finish:
   # Upload coverage
-  - codecov
+  - dir
 
 artifacts:
   - path: dist\*

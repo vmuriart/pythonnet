@@ -1,0 +1,5 @@
+{
+  "assemblies": ["Tests/Domain.Tests/bin/Release/Codecov.Example.Domain.dll"],
+  "typeInclude": "Codecov.Example.*",
+  "typeExclude": "Codecov.Example.*Tests*"
+}

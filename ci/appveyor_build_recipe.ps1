@@ -5,7 +5,7 @@ if ($env:APPVEYOR_PULL_REQUEST_NUMBER -ne 2) {
 
     Write-Host "Starting Conda Update/Install" -ForegroundColor "Green"
     conda config --set always_yes true
-    # conda config --set auto_update_conda False
+    conda config --set auto_update_conda False
     conda install conda-build jinja2 anaconda-client -q
 
     Write-Host "Starting Conda Recipe build" -ForegroundColor "Green"

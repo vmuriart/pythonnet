@@ -1,4 +1,4 @@
-if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+if ($env:APPVEYOR_PULL_REQUEST_NUMBER -ne 2) {
     # Update PATH, and keep a copy to restore at end of this PowerShell script
     $old_path = $env:path
     $env:path = "$env:CONDA_BLD;$env:CONDA_BLD\Scripts;" + $env:path

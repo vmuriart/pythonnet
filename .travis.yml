@@ -57,3 +57,11 @@ after_success:
 
 notifications:
   email: false
+
+before_cache:
+  - rm -rf $HOME/.cache/pip/log
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - packages

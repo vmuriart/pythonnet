@@ -68,3 +68,8 @@ on_finish:
 
 artifacts:
   - path: dist\*
+
+cache:
+  # preserve `packages` directory; will reset if `packages.config` is modified
+  - packages -> **\packages.config
+  - '%LOCALAPPDATA%\pip\Cache' -> appveyor.yml

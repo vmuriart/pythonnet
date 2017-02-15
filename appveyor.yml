@@ -64,7 +64,12 @@ test_script:
 
 on_finish:
   # Upload coverage
-  - codecov
+  - dir
 
 artifacts:
   - path: dist\*
+
+cache:
+  # preserve `packages` directory; will reset if `packages.config` is modified
+  - packages -> **\packages.config
+  - '%LOCALAPPDATA%\pip\Cache -> appveyor.yml'

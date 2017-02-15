@@ -1,11 +1,12 @@
-if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
+if ($env:APPVEYOR_PULL_REQUEST_NUMBER -ne 2) {
     # Update PATH, and keep a copy to restore at end of this PowerShell script
     $old_path = $env:path
     $env:path = "$env:CONDA_BLD;$env:CONDA_BLD\Scripts;" + $env:path
 
     Write-Host "Starting Conda Update/Install" -ForegroundColor "Green"
-    conda update conda -q -y
-    conda install conda-build jinja2 anaconda-client -q -y
+    conda config --set always_yes true
+    # conda config --set auto_update_conda False
+    conda install conda-build jinja2 anaconda-client -q
 
     Write-Host "Starting Conda Recipe build" -ForegroundColor "Green"
     conda build conda.recipe -q --dirty

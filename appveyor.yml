@@ -72,4 +72,4 @@ artifacts:
 cache:
   # preserve `packages` directory; will reset if `packages.config` is modified
   - packages -> **\packages.config
-  - '%LOCALAPPDATA%\pip\Cache' -> appveyor.yml
+  - '%LOCALAPPDATA%\pip\Cache -> appveyor.yml'

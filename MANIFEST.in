@@ -1,0 +1,12 @@
+graft src
+graft tools
+
+include AUTHORS.md
+include CHANGELOG.md
+include LICENSE
+include README.md
+
+include Python.Runtime.dll.config
+include pythonnet.sln
+
+global-exclude *.py[cod] __pycache__ *.so *.dylib

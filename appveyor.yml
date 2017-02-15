@@ -19,6 +19,9 @@ environment:
     - PYTHON_VERSION: 3.6
 
 init:
+  # Skip if newer PULL_REQUEST build in queue
+  # - ps: .\ci\appveyor_check_newer_pr.ps1
+
   # Update Environment Variables based on matrix/platform
   - set PY_VER=%PYTHON_VERSION:.=%
   - set PYTHON=C:\PYTHON%PY_VER%
@@ -49,6 +52,10 @@ on_finish:
   - codecov --file coverage.xml --flags Setup_Windows
   - codecov --file py.coverage --flags Python_Tests
   - codecov --file cs.coverage --flags Embedded_Tests
+
+on_failure:
+  - 7z.exe a foo.7z C:\foo
+  - appveyor PushArtifact foo.7z
 
 artifacts:
   - path: dist\*

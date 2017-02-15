@@ -17,6 +17,7 @@ $PY = Get-Command python
 # Can't use ".\build\*\Python.EmbeddingTest.dll". Missing framework files.
 $CS_TESTS = ".\src\embed_tests\bin\Python.EmbeddingTest.dll"
 $RUNTIME_DIR = ".\src\runtime\bin\"
+$wc = New-Object 'System.Net.WebClient'
 
 # Run python tests with C# coverage
 Write-Host ("Starting Python tests") -ForegroundColor "Green"
@@ -27,6 +28,7 @@ $PYTHON_STATUS = $LastExitCode
 if ($PYTHON_STATUS -ne 0) {
     Write-Host "Python tests failed, continuing to embedded tests" -ForegroundColor "Red"
 }
+$wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResult_pytest.xml))
 
 # Run Embedded tests with C# coverage
 Write-Host ("Starting embedded tests") -ForegroundColor "Green"
@@ -38,6 +40,7 @@ $CS_STATUS = $LastExitCode
 if ($CS_STATUS -ne 0) {
     Write-Host "Embedded tests failed" -ForegroundColor "Red"
 }
+$wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit3/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResult.xml))
 
 # Set exit code to fail if either Python or Embedded tests failed
 if ($PYTHON_STATUS -ne 0 -or $CS_STATUS -ne 0) {

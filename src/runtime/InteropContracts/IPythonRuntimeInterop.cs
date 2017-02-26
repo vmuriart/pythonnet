@@ -317,7 +317,7 @@ namespace Python.Runtime.InteropContracts
 
         IntPtr PyUnicode_FromObject(IntPtr ob);
 
-        unsafe char* PyUnicode_AsUnicode(IntPtr ob);
+        IntPtr PyUnicode_AsUnicode(IntPtr ob);
 
         IntPtr PyUnicode_AS_UNICODE(IntPtr op);
 

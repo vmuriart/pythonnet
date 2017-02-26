@@ -382,7 +382,7 @@ setup(
         ("{install_platlib}", [
             "{build_lib}/Python.Runtime.dll",
             "{build_lib}/Python.Runtime.Interop.dll",
-            "Python.Runtime.dll.config"]),
+            "Python.Runtime.Interop.dll.config"]),
     ],
     cmdclass={
         "build_ext": BuildExtPythonnet,

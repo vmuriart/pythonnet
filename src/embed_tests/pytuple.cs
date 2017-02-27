@@ -58,6 +58,22 @@ namespace Python.EmbeddingTest
             }
         }
 
+        [Test]
+        [Ignore("Add GC Tests. This one hangs tests")]
+        public void TestPyTupleArrayCtorDisposedValue()
+        {
+            using (Py.GIL())
+            {
+                var numbers = new PyObject[2] {new PyInt(0), new PyInt(1)};
+                numbers[0].Dispose();
+
+                var t = new PyTuple(numbers);
+
+                Assert.IsNull(t[0]);
+                Assert.Equals(1, t[1]);
+            }
+        }
+
         /// <summary>
         /// Test PyTuple.Concat(...) doesn't let invalid appends happen
         /// and throws and exception.

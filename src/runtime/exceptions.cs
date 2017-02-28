@@ -109,7 +109,7 @@ namespace Python.Runtime
         /// </summary>
         internal static void Shutdown()
         {
-            if (Runtime.Py_IsInitialized() != 0)
+            if (Runtime.Py_IsInitialized())
             {
                 Type type = typeof(Exceptions);
                 foreach (FieldInfo fi in type.GetFields(BindingFlags.Public | BindingFlags.Static))

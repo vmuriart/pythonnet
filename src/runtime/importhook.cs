@@ -72,7 +72,7 @@ namespace Python.Runtime
         /// </summary>
         internal static void Shutdown()
         {
-            if (Runtime.Py_IsInitialized() != 0)
+            if (Runtime.Py_IsInitialized())
             {
                 Runtime.XDecref(py_clr_module);
                 Runtime.XDecref(root.pyHandle);

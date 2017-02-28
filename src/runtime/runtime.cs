@@ -174,9 +174,9 @@ namespace Python.Runtime
             IsPython2 = pyversionnumber < 30;
             IsPython3 = pyversionnumber >= 30;
 
-            if (Py_IsInitialized() == 0)
+            if (!Py_IsInitialized())
             {
-                Py_Initialize();
+                Runtime.Py_Initialize();
             }
 
             if (PyEval_ThreadsInitialized() == 0)
@@ -598,7 +598,7 @@ namespace Python.Runtime
         internal static extern void Py_Initialize();
 
         [DllImport(PythonDll)]
-        internal static extern int Py_IsInitialized();
+        internal static extern bool Py_IsInitialized();
 
         [DllImport(PythonDll)]
         internal static extern void Py_Finalize();

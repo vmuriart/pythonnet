@@ -197,7 +197,7 @@ namespace Python.Runtime
         {
             // Note: the managed GC thread can run and try to free one of
             // these *after* the Python runtime has been finalized!
-            if (Runtime.Py_IsInitialized() > 0)
+            if (Runtime.Py_IsInitialized() )
             {
                 IntPtr gs = PythonEngine.AcquireLock();
                 Runtime.XDecref(target);

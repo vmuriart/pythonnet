@@ -514,16 +514,17 @@ namespace Python.Runtime
             return;
 #else
             var p = (void*)op;
-            if ((void*)0 != p)
+            if ((void*)0 == p)
             {
-                if (Is32Bit)
-                {
-                    (*(int*)p)++;
-                }
-                else
-                {
-                    (*(long*)p)++;
-                }
+                return;
+            }
+            if (Is32Bit)
+            {
+                (*(int*)p)++;
+            }
+            else
+            {
+                (*(long*)p)++;
             }
 #endif
         }
@@ -539,15 +540,8 @@ namespace Python.Runtime
             var p = (void*)op;
             if ((void*)0 != p)
             {
-                if (Is32Bit)
-                {
-                    --(*(int*)p);
-                }
-                else
-                {
-                    --(*(long*)p);
-                }
-                if ((*(int*)p) == 0)
+                var count = Is32Bit ? --(*(int*)p) : --(*(long*)p);
+                if (count == 0)
                 {
                     // PyObject_HEAD: struct _typeobject *ob_type
                     void* t = Is32Bit
@@ -570,18 +564,11 @@ namespace Python.Runtime
         internal static unsafe long Refcount(IntPtr op)
         {
             var p = (void*)op;
-            if ((void*)0 != p)
+            if ((void*)0 == p)
             {
-                if (Is32Bit)
-                {
-                    return (*(int*)p);
-                }
-                else
-                {
-                    return (*(long*)p);
-                }
+                return 0;
             }
-            return 0;
+            return Is32Bit ? *(int*)p : *(long*)p;
         }
 
 #if Py_DEBUG
@@ -795,14 +782,9 @@ namespace Python.Runtime
 #else
             var n = 1;
 #endif
-            if (Is32Bit)
-            {
-                return new IntPtr((void*)(*((uint*)p + n)));
-            }
-            else
-            {
-                return new IntPtr((void*)(*((ulong*)p + n)));
-            }
+            return Is32Bit
+                ? new IntPtr((void*)(*((uint*)p + n)))
+                : new IntPtr((void*)(*((ulong*)p + n)));
         }
 
         /// <summary>

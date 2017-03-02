@@ -1289,19 +1289,14 @@ namespace Python.Runtime
 #if PYTHON2 // Python 3 strings are all Unicode
             if (type == PyStringType)
             {
-                return Marshal.PtrToStringAnsi(PyString_AsString(op), PyString_Size(op));
+                return Marshal.PtrToStringAnsi(PyString_AsString(op));
             }
 #endif
 
             if (type == PyUnicodeType)
             {
                 IntPtr p = PyUnicode_AsUnicode(op);
-                int length = PyUnicode_GetSize(op);
-
-                int size = length * UCS;
-                var buffer = new byte[size];
-                Marshal.Copy(p, buffer, 0, size);
-                return PyEncoding.GetString(buffer, 0, size);
+                return UcsMarshaler.PtrToStringUni(p);
             }
 
             return null;

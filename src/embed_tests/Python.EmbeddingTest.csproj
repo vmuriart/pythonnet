@@ -89,16 +89,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="pyinitialize.cs" />
-    <Compile Include="dynamic.cs" />
-    <Compile Include="pyimport.cs" />
-    <Compile Include="pyiter.cs" />
-    <Compile Include="pylong.cs" />
     <Compile Include="pyobject.cs" />
-    <Compile Include="pyrunstring.cs" />
-    <Compile Include="pythonexception.cs" />
-    <Compile Include="pytuple.cs" />
-    <Compile Include="TestPythonEngineProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\runtime\Python.Runtime.csproj">

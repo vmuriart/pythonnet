@@ -17,6 +17,8 @@
     <LangVersion>6</LangVersion>
     <RestorePackages>true</RestorePackages>
     <ErrorReport>prompt</ErrorReport>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\pythonnet.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86'">
     <PlatformTarget>x86</PlatformTarget>

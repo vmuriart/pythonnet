@@ -18,6 +18,11 @@
     <LangVersion>6</LangVersion>
     <RestorePackages>true</RestorePackages>
     <ErrorReport>prompt</ErrorReport>
+    <DllExportNamespace>RGiesecke.DllExport</DllExportNamespace>
+    <DllExportDDNSCecil>true</DllExportDDNSCecil>
+    <DllExportOrdinalsBase>1</DllExportOrdinalsBase>
+    <DllExportGenExpLib>false</DllExportGenExpLib>
+    <DllExportOurILAsm>true</DllExportOurILAsm>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86'">
     <PlatformTarget>x86</PlatformTarget>
@@ -66,8 +71,8 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="RGiesecke.DllExport.Metadata">
-      <HintPath>..\..\packages\UnmanagedExports.1.2.7\lib\net\RGiesecke.DllExport.Metadata.dll</HintPath>
+    <Reference Include="DllExport, Version=1.5.1.35977, Culture=neutral, PublicKeyToken=8337224c9ad9e356, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\DllExport.1.5.1\lib\net20\DllExport.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -87,9 +92,9 @@
     <TargetAssembly>$(TargetPath)</TargetAssembly>
     <TargetAssemblyPdb>$(TargetDir)$(TargetName).pdb</TargetAssemblyPdb>
   </PropertyGroup>
-  <Target Name="AfterBuild" DependsOnTargets="RGieseckeDllExport">
+  <Target Name="AfterBuild" DependsOnTargets="DllExportMod">
     <Copy SourceFiles="$(TargetAssembly)" DestinationFiles="$(PythonBuildDir)\clr.pyd" />
     <Copy SourceFiles="$(TargetAssemblyPdb)" Condition="Exists('$(TargetAssemblyPdb)')" DestinationFiles="$(PythonBuildDir)\clr.pdb" />
   </Target>
-  <Import Project="../../packages/UnmanagedExports.1.2.7/tools/RGiesecke.DllExport.targets" Condition="Exists('../../packages/UnmanagedExports.1.2.7/tools/RGiesecke.DllExport.targets')" />
+  <Import Project="../../packages/DllExport.1.5.1/tools/net.r_eg.DllExport.targets" Condition="Exists('../../packages/DllExport.1.5.1/tools/net.r_eg.DllExport.targets')" />
 </Project>

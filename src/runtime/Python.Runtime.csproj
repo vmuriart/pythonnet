@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -116,7 +116,7 @@
     <Compile Include="moduleobject.cs" />
     <Compile Include="modulepropertyobject.cs" />
     <Compile Include="nativecall.cs" />
-    <Compile Include="overload.cs" />
+    <Compile Include="OverloadMapper.cs" />
     <Compile Include="propertyobject.cs" />
     <Compile Include="pyansistring.cs" />
     <Compile Include="pydict.cs" />

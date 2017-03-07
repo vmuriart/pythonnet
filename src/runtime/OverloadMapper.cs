@@ -9,14 +9,14 @@ namespace Python.Runtime
     /// </summary>
     internal class OverloadMapper : ExtensionType
     {
-        private MethodObject m;
-        private IntPtr target;
+        private readonly MethodObject _method;
+        private readonly IntPtr _target;
 
-        public OverloadMapper(MethodObject m, IntPtr target)
+        public OverloadMapper(MethodObject method, IntPtr target)
         {
             Runtime.XIncref(target);
-            this.target = target;
-            this.m = m;
+            _target = target;
+            _method = method;
         }
 
         /// <summary>
@@ -36,14 +36,13 @@ namespace Python.Runtime
                 return Exceptions.RaiseTypeError("type(s) expected");
             }
 
-            MethodInfo mi = MethodBinder.MatchSignature(self.m.info, types);
+            MethodInfo mi = MethodBinder.MatchSignature(self._method.info, types);
             if (mi == null)
             {
-                var e = "No match found for signature";
-                return Exceptions.RaiseTypeError(e);
+                return Exceptions.RaiseTypeError("No match found for signature");
             }
 
-            var mb = new MethodBinding(self.m, self.target) { info = mi };
+            var mb = new MethodBinding(self._method, self._target) { info = mi };
             Runtime.XIncref(mb.pyHandle);
             return mb.pyHandle;
         }
@@ -54,7 +53,7 @@ namespace Python.Runtime
         public static IntPtr tp_repr(IntPtr op)
         {
             var self = (OverloadMapper)GetManagedObject(op);
-            IntPtr doc = self.m.GetDocString();
+            IntPtr doc = self._method.GetDocString();
             Runtime.XIncref(doc);
             return doc;
         }
@@ -65,7 +64,7 @@ namespace Python.Runtime
         public new static void tp_dealloc(IntPtr ob)
         {
             var self = (OverloadMapper)GetManagedObject(ob);
-            Runtime.XDecref(self.target);
+            Runtime.XDecref(self._target);
             FinalizeObject(self);
         }
     }

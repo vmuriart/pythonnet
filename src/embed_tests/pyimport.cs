@@ -64,5 +64,24 @@ namespace Python.EmbeddingTest
             PyObject module = PythonEngine.ImportModule("PyImportTest.sysargv");
             Assert.IsNotNull(module);
         }
+
+        /// <summary>
+        /// Test StrongNameSigning doesn't break casting GH#420
+        /// </summary>
+        [Test]
+        public void TestStrongNameCast()
+        {
+            dynamic foo;
+            using (Py.GIL())
+            {
+                foo = Py.Import("PyImportTest.sn_test");
+            }
+            Assert.AreEqual("1", foo.FOO.ToString());
+            Assert.AreEqual("1", foo.test_foo().ToString());
+
+            foo.FOO = 2;
+            Assert.AreEqual("2", foo.FOO.ToString());
+            Assert.AreEqual("2", foo.test_foo().ToString());
+        }
     }
 }

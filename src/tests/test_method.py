@@ -832,3 +832,18 @@ def test_case_sensitive():
 
     with pytest.raises(AttributeError):
         MethodTest.casesensitive()
+
+
+def test_numpy_float64():
+    """Test that case-sensitivity is respected. GH#81"""
+
+    np = pytest.importorskip("numpy")
+
+    from System import Array, Object
+
+    arr3 = Array[Object]([np.float(1),np.long(1)])
+    list(arr3)  # returns [1.0, 1]
+    print(list(arr3))
+
+    arr4 = Array[Object]([np.float(1),np.double(1)])
+    print(list(arr4))

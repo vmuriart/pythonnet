@@ -15,68 +15,63 @@ from System.Collections.Generic import List
 from ._compat import range
 
 
+# Issue is with GC at the end of the tests. If GC in C# isn't called before
+# pythons, then tests will exit with fail. Seems to mostly occur when a subclass
+# is used more than once. If only used once, seems to be ok.
 
 class InterfaceTestClass(IInterfaceTest):
-        """class that implements the test interface"""
-        __namespace__ = "Python.Test"
+    """class that implements the test interface"""
+    __namespace__ = "Python.Test"
 
-        def foo(self):
-            return "InterfaceTestClass"
+    def foo(self):
+        return "InterfaceTestClass"
 
-        def bar(self, x, i):
-            return "/".join([x] * i)
-
-
+    def bar(self, x, i):
+        return "/".join([x] * i)
 
 
 class DerivedClass(SubClassTest):
-        """class that derives from a class deriving from IInterfaceTest"""
-        __namespace__ = "Python.Test"
+    """class that derives from a class deriving from IInterfaceTest"""
+    __namespace__ = "Python.Test"
 
-        def foo(self):
-            return "DerivedClass"
+    def foo(self):
+        return "DerivedClass"
 
-        def base_foo(self):
-            return SubClassTest.foo(self)
+    def base_foo(self):
+        return SubClassTest.foo(self)
 
-        def super_foo(self):
-            return super(DerivedClass, self).foo()
+    def super_foo(self):
+        return super(DerivedClass, self).foo()
 
-        def bar(self, x, i):
-            return "_".join([x] * i)
+    def bar(self, x, i):
+        return "_".join([x] * i)
 
-        def return_list(self):
-            l = List[str]()
-            l.Add("A")
-            l.Add("B")
-            l.Add("C")
-            return l
+    def return_list(self):
+        l = List[str]()
+        l.Add("A")
+        l.Add("B")
+        l.Add("C")
+        return l
 
 
+class DerivedEventTest(IInterfaceTest):
+    """class that implements IInterfaceTest.TestEvent"""
+    __namespace__ = "Python.Test"
 
-def derived_event_test_class_fixture():
-    """Delay creation of class until test starts."""
+    def __init__(self):
+        self.event_handlers = []
 
-    class DerivedEventTest(IInterfaceTest):
-        """class that implements IInterfaceTest.TestEvent"""
-        __namespace__ = "Python.Test"
+    # event handling
+    def add_TestEvent(self, handler):
+        self.event_handlers.append(handler)
 
-        def __init__(self):
-            self.event_handlers = []
+    def remove_TestEvent(self, handler):
+        self.event_handlers.remove(handler)
 
-        # event handling
-        def add_TestEvent(self, handler):
-            self.event_handlers.append(handler)
-
-        def remove_TestEvent(self, handler):
-            self.event_handlers.remove(handler)
-
-        def OnTestEvent(self, value):
-            args = EventArgsTest(value)
-            for handler in self.event_handlers:
-                handler(self, args)
-
-    return DerivedEventTest
+    def OnTestEvent(self, value):
+        args = EventArgsTest(value)
+        for handler in self.event_handlers:
+            handler(self, args)
 
 
 def test_base_class():
@@ -142,7 +137,6 @@ def test_create_instance():
     assert id(y) == id(ob2)
 
 
-@pytest.mark.skip(reason="FIXME: test randomly pass/fails")
 def test_events():
     class EventHandler(object):
         def handler(self, x, args):
@@ -159,7 +153,6 @@ def test_events():
     with pytest.raises(System.NotImplementedException):
         FunctionsTest.test_event(i, 2)
 
-    DerivedEventTest = derived_event_test_class_fixture()
     d = DerivedEventTest()
     d.add_TestEvent(event_handler.handler)
     assert FunctionsTest.test_event(d, 3) == 3

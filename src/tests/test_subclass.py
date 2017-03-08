@@ -15,10 +15,8 @@ from System.Collections.Generic import List
 from ._compat import range
 
 
-def interface_test_class_fixture():
-    """Delay creation of class until test starts."""
 
-    class InterfaceTestClass(IInterfaceTest):
+class InterfaceTestClass(IInterfaceTest):
         """class that implements the test interface"""
         __namespace__ = "Python.Test"
 
@@ -28,13 +26,10 @@ def interface_test_class_fixture():
         def bar(self, x, i):
             return "/".join([x] * i)
 
-    return InterfaceTestClass
 
 
-def derived_class_fixture():
-    """Delay creation of class until test starts."""
 
-    class DerivedClass(SubClassTest):
+class DerivedClass(SubClassTest):
         """class that derives from a class deriving from IInterfaceTest"""
         __namespace__ = "Python.Test"
 
@@ -57,7 +52,6 @@ def derived_class_fixture():
             l.Add("C")
             return l
 
-    return DerivedClass
 
 
 def derived_event_test_class_fixture():
@@ -99,7 +93,6 @@ def test_base_class():
 
 def test_interface():
     """Test python classes can derive from C# interfaces"""
-    InterfaceTestClass = interface_test_class_fixture()
     ob = InterfaceTestClass()
     assert ob.foo() == "InterfaceTestClass"
     assert FunctionsTest.test_foo(ob) == "InterfaceTestClass"
@@ -112,7 +105,6 @@ def test_interface():
 
 def test_derived_class():
     """Test python class derived from managed type"""
-    DerivedClass = derived_class_fixture()
     ob = DerivedClass()
     assert ob.foo() == "DerivedClass"
     assert ob.base_foo() == "foo"
@@ -128,10 +120,8 @@ def test_derived_class():
     assert id(x) == id(ob)
 
 
-@pytest.mark.skip(reason="FIXME: test randomly pass/fails")
 def test_create_instance():
     """Test derived instances can be created from managed code"""
-    DerivedClass = derived_class_fixture()
     ob = FunctionsTest.create_instance(DerivedClass)
     assert ob.foo() == "DerivedClass"
     assert FunctionsTest.test_foo(ob) == "DerivedClass"
@@ -142,7 +132,6 @@ def test_create_instance():
     x = FunctionsTest.pass_through(ob)
     assert id(x) == id(ob)
 
-    InterfaceTestClass = interface_test_class_fixture()
     ob2 = FunctionsTest.create_instance(InterfaceTestClass)
     assert ob2.foo() == "InterfaceTestClass"
     assert FunctionsTest.test_foo(ob2) == "InterfaceTestClass"
@@ -166,7 +155,6 @@ def test_events():
     assert FunctionsTest.test_event(x, 1) == 1
     assert event_handler.value == 1
 
-    InterfaceTestClass = interface_test_class_fixture()
     i = InterfaceTestClass()
     with pytest.raises(System.NotImplementedException):
         FunctionsTest.test_event(i, 2)

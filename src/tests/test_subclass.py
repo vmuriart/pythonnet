@@ -85,7 +85,6 @@ def derived_event_test_class_fixture():
     return DerivedEventTest
 
 
-@pytest.mark.skip(reason="FIXME: test randomly pass/fails")
 def test_base_class():
     """Test base class managed type"""
     ob = SubClassTest()
